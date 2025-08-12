@@ -1,0 +1,6 @@
+@DanCartBack_HostAddress = http://localhost:5298
+
+GET {{DanCartBack_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
