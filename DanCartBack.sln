@@ -1,9 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36301.6 d17.14
+VisualStudioVersion = 17.14.36301.6
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCartBack", "DanCartBack\DanCartBack.csproj", "{525961BB-FC4B-47AB-904A-39F19ACAC3E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.WebApi", "DanCart.WebApi\DanCart.WebApi.csproj", "{525961BB-FC4B-47AB-904A-39F19ACAC3E1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.DataAccess", "DanCart.DataAccess\DanCart.DataAccess.csproj", "{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.Models", "DanCart.Models\DanCart.Models.csproj", "{2E53B062-9BC9-4325-8254-8F7B56A432EF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.Utility", "DanCart.Utility\DanCart.Utility.csproj", "{CCC8C281-90CD-4828-942F-BFA6F5799A63}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +21,18 @@ Global
 		{525961BB-FC4B-47AB-904A-39F19ACAC3E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{525961BB-FC4B-47AB-904A-39F19ACAC3E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{525961BB-FC4B-47AB-904A-39F19ACAC3E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E53B062-9BC9-4325-8254-8F7B56A432EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E53B062-9BC9-4325-8254-8F7B56A432EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E53B062-9BC9-4325-8254-8F7B56A432EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E53B062-9BC9-4325-8254-8F7B56A432EF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
