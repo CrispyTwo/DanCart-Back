@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DanCart.Models\DanCart.Models.csproj" />
-    <ProjectReference Include="..\DanCart.Utility\DanCart.Utility.csproj" />
+    <ProjectReference Include="..\Models\Models.csproj" />
+    <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>
 
 </Project>

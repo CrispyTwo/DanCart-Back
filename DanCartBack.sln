@@ -1,15 +1,35 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36301.6
+# Visual Studio Version 18
+VisualStudioVersion = 18.0.11010.61 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.WebApi", "DanCart.WebApi\DanCart.WebApi.csproj", "{525961BB-FC4B-47AB-904A-39F19ACAC3E1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "src\WebApi\WebApi.csproj", "{525961BB-FC4B-47AB-904A-39F19ACAC3E1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.DataAccess", "DanCart.DataAccess\DanCart.DataAccess.csproj", "{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "src\DataAccess\DataAccess.csproj", "{32FC11CD-B54B-46D7-BBF6-1934D81F4B98}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.Models", "DanCart.Models\DanCart.Models.csproj", "{2E53B062-9BC9-4325-8254-8F7B56A432EF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "src\Models\Models.csproj", "{2E53B062-9BC9-4325-8254-8F7B56A432EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DanCart.Utility", "DanCart.Utility\DanCart.Utility.csproj", "{CCC8C281-90CD-4828-942F-BFA6F5799A63}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Utility", "src\Utility\Utility.csproj", "{CCC8C281-90CD-4828-942F-BFA6F5799A63}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{CFA544BF-C9AB-4D80-9B31-B9F2CB84B648}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{87ED80C3-FEC0-42E0-B3E2-CDC950FB945F}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Commands.txt = Commands.txt
+		Dockerfile = Dockerfile
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{855AFC0A-04B3-474D-B19B-F9832434199A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{B6CA8566-199D-43F8-ABE7-4A302C903530}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +56,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{525961BB-FC4B-47AB-904A-39F19ACAC3E1} = {C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}
+		{32FC11CD-B54B-46D7-BBF6-1934D81F4B98} = {C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}
+		{2E53B062-9BC9-4325-8254-8F7B56A432EF} = {C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}
+		{CCC8C281-90CD-4828-942F-BFA6F5799A63} = {C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}
+		{CFA544BF-C9AB-4D80-9B31-B9F2CB84B648} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {26DC6F9E-8C0B-425D-BFA7-B48399151FA7}

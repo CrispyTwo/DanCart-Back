@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -94,7 +93,6 @@ builder.Services.AddCors(options =>
     });
 });
 
-//builder.Services.AddOpenApi();
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
