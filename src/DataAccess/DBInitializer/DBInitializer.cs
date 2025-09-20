@@ -12,8 +12,10 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
     readonly UserManager<ApplicationUser> _userManager = userManager;
     readonly RoleManager<IdentityRole> _roleManager = roleManager;
 
-    public void Initialize(string email, string password)
+    public void Initialize()
     {
+        const string email = "Admin@gmail.com", password = "Admin123*";
+
         try
         {
             if(_db.Database.GetPendingMigrations().Any())

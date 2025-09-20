@@ -14,7 +14,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -105,7 +105,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
 
-SeedDatabase("Admin@gmail.com", "Admin123*");
+SeedDatabase();
 
 app.UseAuthentication();
 app.UseAuthorization();
@@ -114,9 +114,11 @@ app.MapControllers();
 
 app.Run();
 
-void SeedDatabase(string email, string password)
+void SeedDatabase()
 {
     using var scope = app.Services.CreateScope();
     var dbInitializer = scope.ServiceProvider.GetRequiredService<IDBInitializer>();
-    dbInitializer.Initialize(email, password);
+    dbInitializer.Initialize();
 }
+
+public partial class Program;

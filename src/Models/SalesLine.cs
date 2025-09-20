@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using DanCart.Utility;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DanCart.Models;
@@ -19,5 +20,6 @@ public class SalesLine
     public Product Product { get; set; }
 
     public int Count { get; set; }
-    public double Price { get; set; }
+    [Column(TypeName = SqlColumnTypes.Decimal10_2)]
+    public decimal Price { get; set; }
 }

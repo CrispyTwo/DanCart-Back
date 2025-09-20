@@ -9,9 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace DanCart.WebApi.Controllers;
 
 [ApiController, Route("api/v1/[controller]"), Authorize(Roles = UserRole.Admin)]
-public class ProductsController(
-    IUnitOfWork _unitOfWork, 
-    IMapper _mapper) : ControllerBase
+public class ProductsController(IUnitOfWork _unitOfWork, IMapper _mapper) : RESTControllerBase
 {
     private const int MaxPageSize = 100;
     private const int MinPageSize = 20;
@@ -19,7 +17,7 @@ public class ProductsController(
     [HttpGet, AllowAnonymous]
     public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = MinPageSize)
     {
-        pageSize = Math.Clamp(pageSize, MinPageSize, MaxPageSize);
+        pageSize = GetPageSize(pageSize, MinPageSize, MaxPageSize);
         var products = await _unitOfWork.Product.GetRangeAsync(page, pageSize);
         return Ok(products);
     }
@@ -41,7 +39,7 @@ public class ProductsController(
         await _unitOfWork.Product.AddAsync(entity);
         await _unitOfWork.SaveAsync();
 
-        return CreatedAtAction(nameof(Create), model);
+        return CreatedAtAction(nameof(Create), entity);
     }
 
     [HttpPut("{id}")]
