@@ -3,6 +3,7 @@ using System;
 using DanCart.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DanCart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250918072502_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -172,6 +175,9 @@ namespace DanCart.DataAccess.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.ToTable("Products");
                 });
 
@@ -197,8 +203,7 @@ namespace DanCart.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("SalesOrderId", "ProductId")
-                        .IsUnique();
+                    b.HasIndex("SalesOrderId");
 
                     b.ToTable("SalesLines");
                 });
@@ -246,7 +251,7 @@ namespace DanCart.DataAccess.Migrations
                     b.Property<string>("PaymentStatus")
                         .HasColumnType("text");
 
-                    b.Property<string>("Phone")
+                    b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -272,6 +277,9 @@ namespace DanCart.DataAccess.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Id")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 

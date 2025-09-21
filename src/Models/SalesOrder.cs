@@ -26,7 +26,7 @@ public class SalesOrder
     public string? SessionId { get; set; }
     public string? PaymentIntendId { get; set; }
     [Required]
-    public string PhoneNumber { get; set; }
+    public string Phone { get; set; }
     [Required]
     public string Street { get; set; }
     [Required]
@@ -35,6 +35,8 @@ public class SalesOrder
     public string Country { get; set; }
     [Required]
     public string Region { get; set; }
+    [Required]
+    public string Email { get; set; }
     [Required]
     public string Name { get; set; }
 }

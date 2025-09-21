@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 18
-VisualStudioVersion = 18.0.11010.61 d18.0
+VisualStudioVersion = 18.0.11010.61
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "src\WebApi\WebApi.csproj", "{525961BB-FC4B-47AB-904A-39F19ACAC3E1}"
 EndProject
@@ -14,6 +14,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{CFA544BF-C9AB-4D80-9B31-B9F2CB84B648}"
+	ProjectSection(SolutionItems) = preProject
+		ci-cd-pipeline.yml = ci-cd-pipeline.yml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}"
 EndProject
@@ -30,6 +33,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{855AFC0A-04B3-474D-B19B-F9832434199A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "infra", "infra", "{B6CA8566-199D-43F8-ABE7-4A302C903530}"
+	ProjectSection(SolutionItems) = preProject
+		azure.tf = azure.tf
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api.FunctionalTests", "tests\Api.IntegrationTests\Api.FunctionalTests.csproj", "{996D6A9A-73E9-4811-BEA0-84383CD20E6A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,6 +61,10 @@ Global
 		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CCC8C281-90CD-4828-942F-BFA6F5799A63}.Release|Any CPU.Build.0 = Release|Any CPU
+		{996D6A9A-73E9-4811-BEA0-84383CD20E6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{996D6A9A-73E9-4811-BEA0-84383CD20E6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{996D6A9A-73E9-4811-BEA0-84383CD20E6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{996D6A9A-73E9-4811-BEA0-84383CD20E6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -63,6 +75,7 @@ Global
 		{2E53B062-9BC9-4325-8254-8F7B56A432EF} = {C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}
 		{CCC8C281-90CD-4828-942F-BFA6F5799A63} = {C0E33EC2-D0B3-40FE-9882-6D2E8A47C896}
 		{CFA544BF-C9AB-4D80-9B31-B9F2CB84B648} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{996D6A9A-73E9-4811-BEA0-84383CD20E6A} = {855AFC0A-04B3-474D-B19B-F9832434199A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {26DC6F9E-8C0B-425D-BFA7-B48399151FA7}

@@ -16,16 +16,12 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     {
         base.OnModelCreating(builder);
 
-        builder.Entity<Product>()
-            .HasIndex(p => p.Id)
-            .IsUnique();
-
-        builder.Entity<SalesOrder>()
-            .HasIndex(o => o.Id)
+        builder.Entity<SalesLine>()
+            .HasIndex(x => new { x.SalesOrderId, x.ProductId })
             .IsUnique();
 
         builder.Entity<ApplicationUser>()
-            .HasIndex(c => c.Email)
+            .HasIndex(x => x.Email)
             .IsUnique();
     }
 }
