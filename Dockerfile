@@ -9,7 +9,7 @@ COPY ["src/Utility/Utility.csproj", "src/Utility/"]
 COPY ["src/WebApi/WebApi.csproj", "src/WebApi/"]
 
 COPY ["DanCartBack.sln", "./"]
-RUN dotnet restore "DanCartBack.sln"
+RUN dotnet restore "src/${PROJECT}/${PROJECT}.csproj"
 
 COPY src/ src/
 
