@@ -35,7 +35,7 @@ public class ProductsController(IProductService _productService) : APIController
     public async Task<IActionResult> Create([FromBody] ProductCreateDTO model)
     {
         var result = await _productService.CreateAsync(model);
-        if (result.IsSuccess) CreatedAtAction(nameof(Create), result.Value);
+        if (result.IsSuccess) return CreatedAtAction(nameof(Create), result.Value);
 
         return BadRequest(result.Errors);
     }
