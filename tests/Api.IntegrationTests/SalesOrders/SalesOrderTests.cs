@@ -66,11 +66,11 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
 
             // Assert
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.InternalServerError);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
         }
     }
 
-    [Fact]
+    [Fact] 
     public async Task CreateSalesOrderV1_EnoughStock_StockDeducted()
     {
         Guid id1 = await _productFunctions.CreateProduct1(5), id2 = await _productFunctions.CreateProduct2(5);

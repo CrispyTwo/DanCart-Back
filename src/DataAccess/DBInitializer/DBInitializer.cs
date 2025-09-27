@@ -23,7 +23,7 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
                 _db.Database.Migrate();
             }
         }
-        catch (Exception ex) { }
+        catch { }
         
         if (!_roleManager.RoleExistsAsync(UserRole.Customer).GetAwaiter().GetResult())
         {
@@ -44,7 +44,7 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
                 HouseNumber = "123",
                 EmailConfirmed = true
             }, password).GetAwaiter().GetResult();
-            ApplicationUser user = _db.Users.FirstOrDefault(x => x.Email == email);
+            ApplicationUser user = _db.Users.FirstOrDefault(x => x.Email == email)!;
             _userManager.AddToRoleAsync(user, UserRole.Admin).GetAwaiter().GetResult();
         }
         return;

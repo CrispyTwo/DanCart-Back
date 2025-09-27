@@ -15,7 +15,7 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = _db.Set<T>();
     }
     public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
-    public async Task<T> GetAsync(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
+    public async Task<T?> GetAsync(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
     {
         IQueryable<T> query = tracked ? _dbSet : _dbSet.AsNoTracking();
 

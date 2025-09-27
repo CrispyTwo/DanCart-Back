@@ -1,95 +1,79 @@
-using AutoMapper;
-using DanCart.DataAccess.Repository.IRepository;
-using DanCart.Models;
 using DanCart.Models.DTOs.Product;
 using DanCart.Utility;
+using DanCart.WebApi.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DanCart.WebApi.Controllers;
 
 [ApiController, Route("api/v1/[controller]"), Authorize(Roles = UserRole.Admin)]
-public class ProductsController(IUnitOfWork _unitOfWork, IMapper _mapper) : RESTControllerBase
+public class ProductsController(IProductService _productService) : APIControllerBase
 {
-    private const int MaxPageSize = 100;
-    private const int MinPageSize = 20;
-
+    #region CRUD APIs
     [HttpGet, AllowAnonymous]
-    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = MinPageSize)
+    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1)
     {
-        pageSize = GetPageSize(pageSize, MinPageSize, MaxPageSize);
-        var products = await _unitOfWork.Product.GetRangeAsync(page, pageSize);
-        return Ok(products);
+        var result = await _productService.GetAsync(page, pageSize);
+        if (result.IsSuccess) return Ok(result.Value);
+
+        return BadRequest(result.Errors);
     }
 
     [HttpGet("{id}"), AllowAnonymous]
     public async Task<IActionResult> Get(Guid id)
     {
-        var product = await _unitOfWork.Product.GetAsync(x => x.Id == id);
-        if (product == null) return NotFound();
-        return Ok(product);
+        var result = await _productService.GetByIdAsync(id);
+        if (result.IsSuccess) return Ok(result.Value);
+
+        var handledError = ProcessGenericError(result);
+        if (handledError != null) return handledError;
+
+        return BadRequest(result.Errors[0].Message);
     }
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] ProductCreateDTO model)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
-        var entity = _mapper.Map<Product>(model);
+        var result = await _productService.CreateAsync(model);
+        if (result.IsSuccess) return CreatedAtAction(nameof(Create), result.Value);
 
-        await _unitOfWork.Product.AddAsync(entity);
-        await _unitOfWork.SaveAsync();
-
-        return CreatedAtAction(nameof(Create), entity);
+        return BadRequest(result.Errors);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] ProductUpdateDTO model)
     {
-        if (!ModelState.IsValid) return BadRequest(ModelState);
+        var result = await _productService.UpdateAsync(id, model);
+        if (result.IsSuccess) return Ok(result.Value);
 
-        var entity = await _unitOfWork.Product.GetAsync(x => x.Id == id);
-        if (entity == null) return NotFound();
-        _mapper.Map(model, entity);
-        entity.UpdatedAt = DateTime.UtcNow;
+        var handledError = ProcessGenericError(result);
+        if (handledError != null) return handledError;
 
-        _unitOfWork.Product.Update(entity);
-        await _unitOfWork.SaveAsync();
-        return Ok(entity);
+        return BadRequest(result.Errors);
     }
 
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProduct(Guid id)
     {
-        var product = await _unitOfWork.Product.GetAsync(x => x.Id == id);
-        if (product == null) return NotFound();
+        var result = await _productService.DeleteAsync(id);
+        if (result.IsSuccess) return NoContent();
 
-        _unitOfWork.Product.Remove(product);
-        await _unitOfWork.SaveAsync();
-        return NoContent();
+        var handledError = ProcessGenericError(result);
+        if (handledError != null) return handledError;
+
+        return BadRequest(result.Errors);
     }
+    #endregion 
 
-    //[HttpPost("import")]
-    //public async Task<IActionResult> ImportProducts([FromForm] ImportProductsDto model)
-    //{
-    //    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    //    if (string.IsNullOrEmpty(userId))
-    //        return Unauthorized();
+    [HttpPut("{id}/images")]
+    public async Task<IActionResult> UploadImage(Guid id, [FromForm] ProductFileUploadDTO model)
+    {
+        var result = await _productService.GetSignedUrl(id, model);
+        if (result.IsSuccess) return Ok(result.Value);
 
-    //    var result = await _productService.ImportProductsAsync(model, userId);
-    //    return Ok(result);
-    //}
+        var handledError = ProcessGenericError(result);
+        if (handledError != null) return handledError;
 
-    //[HttpPost("{id}/upload-image")]
-    //public async Task<IActionResult> UploadProductImage(int id, IFormFile file)
-    //{
-    //    var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    //    if (string.IsNullOrEmpty(userId))
-    //        return Unauthorized();
-
-    //    var imageUrl = await _productService.UploadProductImageAsync(id, file, userId);
-    //    if (string.IsNullOrEmpty(imageUrl))
-    //        return BadRequest("Failed to upload image");
-
-    //    return Ok(new { imageUrl });
-    //}
+        return BadRequest(result.Errors);
+    }
 }
