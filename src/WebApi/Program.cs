@@ -1,9 +1,12 @@
+using DanCart.DataAccess.Blob;
 using DanCart.DataAccess.Data;
 using DanCart.DataAccess.DBInitializer;
 using DanCart.DataAccess.Repository;
 using DanCart.DataAccess.Repository.IRepository;
 using DanCart.Models;
 using DanCart.WebApi;
+using DanCart.WebApi.Services;
+using DanCart.WebApi.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -51,6 +54,10 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IBlobService, AzureBlobService>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(cfg => { cfg.AddProfile<MappingProfile>(); });
