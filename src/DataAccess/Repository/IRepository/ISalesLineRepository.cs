@@ -1,4 +1,4 @@
-﻿using DanCart.Models;
+﻿using DanCart.Models.SalesOrders;
 
 namespace DanCart.DataAccess.Repository.IRepository;
 public interface ISalesLineRepository : IRepository<SalesLine>

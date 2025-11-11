@@ -1,5 +1,6 @@
 ﻿using Api.FunctionalTests.Abstractions;
-using DanCart.Models;
+using DanCart.Models.Products;
+using DanCart.WebApi.Areas.Products.DTOs;
 using System.Net.Http.Json;
 
 namespace Api.FunctionalTests.Products.Abstractions;
@@ -28,7 +29,7 @@ internal class ProductFunctions(HttpClient _client)
     {
         using var _ = _client.UseBearer();
         var response = await func();
-        var responseContent = await response.Content.ReadFromJsonAsync<Product>();
+        var responseContent = await response.Content.ReadFromJsonAsync<ProductDTO>();
         return responseContent!.Id;
     }
 }

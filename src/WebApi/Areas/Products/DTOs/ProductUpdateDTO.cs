@@ -1,0 +1,18 @@
+﻿using DanCart.Models.Products;
+
+namespace DanCart.WebApi.Areas.Products.DTOs;
+
+public class ProductUpdateDTO
+{
+    public string? Name { get; set; }
+
+    public string? Description { get; set; }
+
+    public decimal Price { get; set; }
+    public int Stock { get; set; }
+    public int LowStockThreshold { get; set; }
+
+    public bool IsActive { get; set; }
+    public decimal Weight { get; set; }
+    public UnitOfMeasure? WeightUnit { get; set; }
+}

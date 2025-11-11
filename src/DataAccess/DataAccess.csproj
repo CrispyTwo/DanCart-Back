@@ -8,14 +8,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="15.1.0" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.25.1" />
+    <PackageReference Include="FluentResults" Version="4.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.8" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.8" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Models\Models.csproj" />
-    <ProjectReference Include="..\Utility\Utility.csproj" />
   </ItemGroup>
 
 </Project>

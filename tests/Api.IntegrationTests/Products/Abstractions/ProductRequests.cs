@@ -1,6 +1,6 @@
-﻿using DanCart.Models.DTOs.Authentication;
-using DanCart.Models.DTOs.Product;
-using DanCart.Utility;
+﻿using DanCart.Models.Products;
+using DanCart.Products.Models.DTOs;
+using DanCart.WebApi.Areas.Products.DTOs;
 
 namespace Api.FunctionalTests.Products.Abstractions;
 
@@ -15,7 +15,7 @@ internal class ProductRequests
         Stock = 100,
         LowStockThreshold = 10,
         Weight = 0.5M,
-        WeightUnit = UnitsOfMeasure.Kilogram,
+        WeightUnit = UnitOfMeasure.Kg,
     };
 
     internal static ProductUpdateDTO GetCreateProduct2() => new()
@@ -26,6 +26,6 @@ internal class ProductRequests
         Stock = 200,
         LowStockThreshold = 15,
         Weight = 1M,
-        WeightUnit = UnitsOfMeasure.Kilogram,
+        WeightUnit = UnitOfMeasure.Kg,
     };
 }

@@ -1,11 +1,11 @@
 ﻿using Api.FunctionalTests.Users.Abstractions;
-using DanCart.Models.DTOs.SalesOrder;
+using DanCart.WebApi.Areas.SalesOrders.DTOs;
 
 namespace Api.FunctionalTests.SalesOrders.Abstractions;
 
 internal class SalesOrderRequests
 {
-    internal const string BaseUrl = "/api/v1/Orders";
+    internal const string BaseUrl = "/api/v1/SalesOrders";
     internal static SalesOrderCreateDTO GetCreateSalesOrder1 => new()
     {
         Lines = [],

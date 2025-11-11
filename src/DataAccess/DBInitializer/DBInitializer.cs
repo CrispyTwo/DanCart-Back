@@ -1,6 +1,7 @@
 ﻿using DanCart.DataAccess.Data;
 using DanCart.Models;
-using DanCart.Utility;
+using DanCart.Models.Auth;
+using DanCart.Models.Products;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,7 +19,7 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
 
         try
         {
-            if(_db.Database.GetPendingMigrations().Any())
+            if (_db.Database.GetPendingMigrations().Any())
             {
                 _db.Database.Migrate();
             }
@@ -44,8 +45,35 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
                 HouseNumber = "123",
                 EmailConfirmed = true
             }, password).GetAwaiter().GetResult();
+            ApplicationUser admin = _db.Users.FirstOrDefault(x => x.Email == email)!;
+            _userManager.AddToRoleAsync(admin, UserRole.Admin).GetAwaiter().GetResult();
+
+            _userManager.CreateAsync(new ApplicationUser
+            {
+                UserName = "dmytrop@gmail.com",
+                Email = "dmytrop@gmail.com",
+                Name = "Dmytro",
+                LastName = "Pochapskiy",
+                PhoneNumber = "5112273333",
+                Street = "Street Avenue",
+                Region = "California",
+                Country = "USA",
+                City = "Los Angeles",
+                HouseNumber = "234",
+                EmailConfirmed = true
+            }, password).GetAwaiter().GetResult();
             ApplicationUser user = _db.Users.FirstOrDefault(x => x.Email == email)!;
-            _userManager.AddToRoleAsync(user, UserRole.Admin).GetAwaiter().GetResult();
+            _userManager.AddToRoleAsync(user, UserRole.Customer).GetAwaiter().GetResult();
+
+            IEnumerable<Product> products =
+            [
+                new Product { Name = "White sugar", WeightUnit = UnitOfMeasure.Kg, Stock = 10, Price = 12.50m, LowStockThreshold = 10 },
+                new Product { Name = "Brown sugar", WeightUnit = UnitOfMeasure.G,  Stock = 20, Price = 0.0125m },
+                new Product { Name = "Flour",       WeightUnit = UnitOfMeasure.Kg, Stock = 0,  Price = 4.20m }
+            ];
+
+            _db.Products.AddRange(products);
+            _db.SaveChanges();
         }
         return;
     }

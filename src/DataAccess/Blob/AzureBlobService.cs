@@ -1,7 +1,7 @@
 ﻿using Azure.Storage;
 using Azure.Storage.Blobs;
 using Azure.Storage.Sas;
-using DanCart.Models.DTOs.Product;
+using DanCart.DataAccess.Models;
 using Microsoft.Extensions.Configuration;
 namespace DanCart.DataAccess.Blob;
 
@@ -11,7 +11,7 @@ public class AzureBlobService(IConfiguration config) : IBlobService
     private readonly string _accountName = config["AzureBlobStorage:AccountName"] ?? throw new ArgumentNullException("AzureBlobStorage:AccountName");
     private readonly string _accountKey = config["AzureBlobStorage:AccountKey"] ?? throw new ArgumentNullException("AzureBlobStorage:AccountKey");
 
-    public async Task<ProductFileUploadResponse> GenerateSignedUriAsync(string containerName, string blobName, string? contentType = null, 
+    public async Task<FileUploadResponse> GenerateSignedUriAsync(string containerName, string blobName, string? contentType = null, 
         TimeSpan? validFor = null, CancellationToken cancellationToken = default)
     {
         var container = _blobServiceClient.GetBlobContainerClient(containerName);

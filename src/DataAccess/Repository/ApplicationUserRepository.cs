@@ -1,6 +1,7 @@
 ﻿using DanCart.DataAccess.Data;
+using DanCart.DataAccess.Models;
 using DanCart.DataAccess.Repository.IRepository;
-using DanCart.Models;
+using DanCart.Models.Auth;
 
 namespace DanCart.DataAccess.Repository;
 

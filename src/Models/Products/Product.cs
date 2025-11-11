@@ -1,0 +1,34 @@
+using DanCart.Models.Utility;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace DanCart.Models.Products;
+
+public class Product
+{
+    [Key]
+    public Guid Id { get; set; } = Guid.NewGuid();
+
+    [Required, MaxLength(200)]
+    public string Name { get; set; } = string.Empty;
+
+    [MaxLength(2000)]
+    public string Description { get; set; } = string.Empty;
+
+    [Column(TypeName = SqlColumnTypes.Decimal10_2)]
+    public decimal Price { get; set; }
+
+    public int Stock { get; set; }
+    public int LowStockThreshold { get; set; } = 5;
+
+    public bool IsActive { get; set; } = true;
+
+    [Column(TypeName = SqlColumnTypes.Decimal10_2)]
+    public decimal Weight { get; set; } = 1m;
+
+    [MaxLength(5)]
+    public UnitOfMeasure WeightUnit { get; set; } = UnitOfMeasure.Kg;
+
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+}

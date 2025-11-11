@@ -1,6 +1,11 @@
+using DanCart.DataAccess.Models;
+using DanCart.Models;
+using DanCart.Models.Auth;
+using DanCart.Models.Products;
+using DanCart.Models.SalesOrders;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using DanCart.Models;
+using System.Reflection.Emit;
 
 namespace DanCart.DataAccess.Data;
 
@@ -15,6 +20,17 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder builder)
     {
         base.OnModelCreating(builder);
+
+        builder.Entity<Product>()
+            .Property(x => x.WeightUnit)
+            .HasConversion<string>()
+            .HasMaxLength(5);
+
+        builder.Entity<SalesOrder>()
+            .HasMany(o => o.SalesLines)
+            .WithOne(l => l.SalesOrder)
+            .HasForeignKey(l => l.SalesOrderId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<SalesLine>()
             .HasIndex(x => new { x.SalesOrderId, x.ProductId })

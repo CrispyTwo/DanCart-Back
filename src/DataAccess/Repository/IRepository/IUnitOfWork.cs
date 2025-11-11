@@ -7,4 +7,5 @@ public interface IUnitOfWork
     IProductRepository Product { get; }
     IStoreRepository Store { get; }
     Task SaveAsync();
+    Task<bool> TrySaveAsync();
 }

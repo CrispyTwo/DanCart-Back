@@ -1,5 +1,6 @@
 ﻿namespace DanCart.WebApi.Extensions;
 
+using DanCart.Models.Auth;
 using System.Security.Claims;
 
 public static class ClaimsPrincipalExtensions
@@ -15,4 +16,6 @@ public static class ClaimsPrincipalExtensions
 
         return userId;
     }
+
+    public static bool IsAdmin(this ClaimsPrincipal user) => user.IsInRole(UserRole.Admin);
 }

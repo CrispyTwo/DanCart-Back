@@ -26,4 +26,16 @@ public class UnitOfWork : IUnitOfWork
     {
         await _db.SaveChangesAsync();
     }
+    public async Task<bool> TrySaveAsync()
+    {
+        try
+        {
+            await _db.SaveChangesAsync();
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }
