@@ -17,12 +17,12 @@ namespace DanCart.DataAccess.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.8")
+                .HasAnnotation("ProductVersion", "9.0.9")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("DanCart.Models.ApplicationUser", b =>
+            modelBuilder.Entity("DanCart.Models.Auth.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -123,7 +123,7 @@ namespace DanCart.DataAccess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DanCart.Models.Product", b =>
+            modelBuilder.Entity("DanCart.Models.Products.Product", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -136,11 +136,6 @@ namespace DanCart.DataAccess.Migrations
                         .IsRequired()
                         .HasMaxLength(2000)
                         .HasColumnType("character varying(2000)");
-
-                    b.Property<string>("ImageUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("character varying(500)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("boolean");
@@ -175,20 +170,20 @@ namespace DanCart.DataAccess.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("DanCart.Models.SalesLine", b =>
+            modelBuilder.Entity("DanCart.Models.SalesOrders.SalesLine", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
-
-                    b.Property<int>("Count")
-                        .HasColumnType("integer");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("SalesOrderId")
                         .HasColumnType("uuid");
@@ -203,7 +198,7 @@ namespace DanCart.DataAccess.Migrations
                     b.ToTable("SalesLines");
                 });
 
-            modelBuilder.Entity("DanCart.Models.SalesOrder", b =>
+            modelBuilder.Entity("DanCart.Models.SalesOrders.SalesOrder", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -231,8 +226,8 @@ namespace DanCart.DataAccess.Migrations
                     b.Property<DateTime>("OrderDate")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("OrderStatus")
-                        .HasColumnType("text");
+                    b.Property<int>("OrderStatus")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("PaymentDate")
                         .HasColumnType("timestamp with time zone");
@@ -243,8 +238,8 @@ namespace DanCart.DataAccess.Migrations
                     b.Property<string>("PaymentIntendId")
                         .HasColumnType("text");
 
-                    b.Property<string>("PaymentStatus")
-                        .HasColumnType("text");
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Phone")
                         .IsRequired()
@@ -496,15 +491,15 @@ namespace DanCart.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DanCart.Models.SalesLine", b =>
+            modelBuilder.Entity("DanCart.Models.SalesOrders.SalesLine", b =>
                 {
-                    b.HasOne("DanCart.Models.Product", "Product")
+                    b.HasOne("DanCart.Models.Products.Product", "Product")
                         .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DanCart.Models.SalesOrder", "SalesOrder")
+                    b.HasOne("DanCart.Models.SalesOrders.SalesOrder", "SalesOrder")
                         .WithMany()
                         .HasForeignKey("SalesOrderId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -515,9 +510,9 @@ namespace DanCart.DataAccess.Migrations
                     b.Navigation("SalesOrder");
                 });
 
-            modelBuilder.Entity("DanCart.Models.SalesOrder", b =>
+            modelBuilder.Entity("DanCart.Models.SalesOrders.SalesOrder", b =>
                 {
-                    b.HasOne("DanCart.Models.ApplicationUser", "User")
+                    b.HasOne("DanCart.Models.Auth.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -537,7 +532,7 @@ namespace DanCart.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("DanCart.Models.ApplicationUser", null)
+                    b.HasOne("DanCart.Models.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -546,7 +541,7 @@ namespace DanCart.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("DanCart.Models.ApplicationUser", null)
+                    b.HasOne("DanCart.Models.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -561,7 +556,7 @@ namespace DanCart.DataAccess.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DanCart.Models.ApplicationUser", null)
+                    b.HasOne("DanCart.Models.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -570,7 +565,7 @@ namespace DanCart.DataAccess.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("DanCart.Models.ApplicationUser", null)
+                    b.HasOne("DanCart.Models.Auth.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

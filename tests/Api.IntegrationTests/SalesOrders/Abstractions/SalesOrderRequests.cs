@@ -1,5 +1,5 @@
 ﻿using Api.FunctionalTests.Users.Abstractions;
-using DanCart.Models.DTOs.SalesOrder;
+using DanCart.WebApi.Areas.SalesOrders.DTOs;
 
 namespace Api.FunctionalTests.SalesOrders.Abstractions;
 

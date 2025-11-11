@@ -1,4 +1,4 @@
-﻿using DanCart.Models.DTOs.Authentication;
+﻿using DanCart.WebApi.Areas.Auth.DTOs;
 
 namespace Api.FunctionalTests.Users.Abstractions;
 

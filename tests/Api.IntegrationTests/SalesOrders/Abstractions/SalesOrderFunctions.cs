@@ -1,7 +1,7 @@
 ﻿using Api.FunctionalTests.Abstractions;
 using Api.FunctionalTests.Users;
-using DanCart.Models;
-using DanCart.Models.DTOs.SalesLine;
+using DanCart.Models.SalesOrders;
+using DanCart.WebApi.Areas.SalesOrders.SalesLines.DTOs;
 using System.Net.Http.Json;
 
 namespace Api.FunctionalTests.SalesOrders.Abstractions;

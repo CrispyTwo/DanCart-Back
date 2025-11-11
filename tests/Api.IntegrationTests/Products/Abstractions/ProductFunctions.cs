@@ -1,5 +1,5 @@
 ﻿using Api.FunctionalTests.Abstractions;
-using DanCart.Models;
+using DanCart.Models.Products;
 using System.Net.Http.Json;
 
 namespace Api.FunctionalTests.Products.Abstractions;

@@ -1,6 +1,5 @@
 ﻿using Api.FunctionalTests.Abstractions;
 using Api.FunctionalTests.Users.Abstractions;
-using DanCart.Models.DTOs.Authentication;
 using FluentAssertions;
 using System.Net.Http.Json;
 
