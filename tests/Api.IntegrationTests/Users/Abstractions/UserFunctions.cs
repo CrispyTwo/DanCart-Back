@@ -1,4 +1,5 @@
 ﻿using DanCart.Models;
+using DanCart.WebApi.Areas.Auth.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,9 +23,9 @@ internal class UserFunctions(HttpClient _client)
 
     private async Task<string> ReadToken(Func<Task<HttpResponseMessage>> func)
     {
-        var token = await (await func())!.Content.ReadAsStringAsync();
+        var json = await (await func())!.Content.ReadFromJsonAsync<AuthResult>();
 
-        if (string.IsNullOrEmpty(token)) throw new UnauthorizedAccessException();
-        return token;
+        if (json == null || string.IsNullOrEmpty(json.Token)) throw new UnauthorizedAccessException();
+        return json.Token;
     }
 }

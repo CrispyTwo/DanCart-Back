@@ -32,7 +32,7 @@ public class AuthController(
         if (!result.Succeeded) return BadRequest(result.Errors);
 
         var token = await GenerateJwtToken(entity);
-        return Ok(new { User = model.Email, Token = token });
+        return Ok(new AuthResult { User = model.Email, Token = token });
     }
 
 
@@ -51,7 +51,7 @@ public class AuthController(
         await _userManager.UpdateAsync(user);
 
         var token = await GenerateJwtToken(user);
-        return Ok(new { User = user.Email, Token = token });
+        return Ok(new AuthResult { User = model.Email, Token = token });
     }
 
     //[HttpPost("forgot-password")]

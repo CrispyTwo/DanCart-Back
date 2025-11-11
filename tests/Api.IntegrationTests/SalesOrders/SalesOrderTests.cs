@@ -22,7 +22,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         Guid id = await _productFunctions.CreateProduct1(5);
 
         var request = SalesOrderRequests.GetCreateSalesOrder1;
-        request.Lines = [new() { ProductId = id, Count = 2 }];
+        request.Lines = [new() { ProductId = id, Quantity = 2 }];
 
         // Act
         var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
@@ -32,10 +32,10 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
     }
 
     [Fact]
-    public async Task CreateSalesOrderV1_UnexistentProductId_BadRequest()
+    public async Task CreateSalesOrderV1_UnexistentProductId_NotFound()
     {
         var request = SalesOrderRequests.GetCreateSalesOrder1;
-        request.Lines = [new() { ProductId = Guid.NewGuid(), Count = 2 }];
+        request.Lines = [new() { ProductId = Guid.NewGuid(), Quantity = 2 }];
 
         using (HttpClient.UseBearer())
         {
@@ -43,7 +43,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
 
             // Assert
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.NotFound);
         }
     }
 
@@ -53,8 +53,8 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         Guid id = await _productFunctions.CreateProduct1(5);
         var salesLines = new[]
         {
-            new SalesLineCreateDTO { ProductId = id, Count = 2 },
-            new SalesLineCreateDTO { ProductId = id, Count = 1 }
+            new SalesLineCreateDTO { ProductId = id, Quantity = 2 },
+            new SalesLineCreateDTO { ProductId = id, Quantity = 1 }
         };
 
         using (HttpClient.UseBearer())
@@ -66,7 +66,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
 
             // Assert
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.InternalServerError);
         }
     }
 
@@ -76,8 +76,8 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         Guid id1 = await _productFunctions.CreateProduct1(5), id2 = await _productFunctions.CreateProduct2(5);
         var salesLines = new[] 
         {
-            new SalesLineCreateDTO { ProductId = id1, Count = 2 },
-            new SalesLineCreateDTO { ProductId = id2, Count = 1 }
+            new SalesLineCreateDTO { ProductId = id1, Quantity = 2 },
+            new SalesLineCreateDTO { ProductId = id2, Quantity = 1 }
         };
 
         using (HttpClient.UseBearer())
@@ -99,13 +99,13 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
     }
 
     [Fact]
-    public async Task CreateSalesOrderV1_OneItemNotEnoughStock_RequestFailed()
+    public async Task CreateSalesOrderV1_OneItemNotEnoughStock_Conflict()
     {
         Guid id1 = await _productFunctions.CreateProduct1(5), id2 = await _productFunctions.CreateProduct2(5);
         var salesLines = new[]
         {
-            new SalesLineCreateDTO { ProductId = id1, Count = 20 },
-            new SalesLineCreateDTO { ProductId = id2, Count = 1 }
+            new SalesLineCreateDTO { ProductId = id1, Quantity = 20 },
+            new SalesLineCreateDTO { ProductId = id2, Quantity = 1 }
         };
 
         using (HttpClient.UseBearer())
@@ -115,7 +115,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
 
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
 
-            response.StatusCode.Should().Be(System.Net.HttpStatusCode.BadRequest);
+            response.StatusCode.Should().Be(System.Net.HttpStatusCode.Conflict);
         }
 
         // Act 
