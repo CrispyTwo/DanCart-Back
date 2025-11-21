@@ -1,4 +1,6 @@
-﻿using DanCart.DataAccess.Models;
+﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using DanCart.DataAccess.Extensions;
 using DanCart.DataAccess.Models.Utility;
 using DanCart.DataAccess.Repository;
 using DanCart.DataAccess.Repository.IRepository;
@@ -7,19 +9,17 @@ using DanCart.WebApi.Areas.Customers.DTOs.Metrics;
 using DanCart.WebApi.Areas.Customers.Services.IServices;
 using DanCart.WebApi.Core;
 using FluentResults;
-using Microsoft.EntityFrameworkCore;
-using System.Collections.Frozen;
 using System.Linq.Expressions;
 
 namespace DanCart.WebApi.Areas.Customers.Services;
 
-public class CustomerService(IUnitOfWork _unitOfWork) : ServiceBase, ICustomerService
+public class CustomerService(IUnitOfWork _unitOfWork, IMapper _mapper) : ServiceBase, ICustomerService
 {
     public async Task<Result<IEnumerable<ApplicationUser>>> GetAsync(
-        int page, int pageSize, bool? isActive, string? sort)
+        Page page, bool? isActive, string? sort)
     {
         const int MinPageSize = 10, MaxPageSize = 50;
-        pageSize = GetPageSize(pageSize, MinPageSize, MaxPageSize);
+        page.ApplySizeRule(MinPageSize, MaxPageSize);
 
         Expression<Func<ApplicationUser, bool>>? filter = null;
         if (isActive.HasValue) filter = x => x.IsActive == isActive.Value;
@@ -27,36 +27,20 @@ public class CustomerService(IUnitOfWork _unitOfWork) : ServiceBase, ICustomerSe
         var sortings = BuildSortingMap(sort);
         var options = new GetRangeOptions<ApplicationUser>() { Filter = filter, Sortings = sortings };
 
-        return Result.Ok(await _unitOfWork.ApplicationUser.GetRangeAsync(new Page { Number = page, Size = pageSize }, options));
+        return Result.Ok(await _unitOfWork.ApplicationUser.GetRangeAsync(page, options));
     }
 
     public async Task<Result<IEnumerable<CustomerWithSalesInfoResponse>>> GetCustomersWithSalesAsync(
-        int page, int pageSize, bool? isActive, string? sort)
+        Page page, bool? isActive, string? sort)
     {
-        var projected = _unitOfWork.ApplicationUser.GetQuery().Select(u => new CustomerWithSalesInfoResponse
-        {
-            FirstName = u.Name,
-            LastName = u.LastName,
-            Email = u.Email!,
-            CreatedAt = u.CreatedAt,
-            IsActive = u.IsActive,
-            OrdersCount = _unitOfWork.SalesOrder.GetQuery().LongCount(x => x.UserId == u.Id),
-            TotalSpent = _unitOfWork.SalesLine.GetQuery().Where(l => l.SalesOrder.UserId == u.Id)
-                            .Select(l => (decimal?)(l.Price * l.Quantity))
-                            .Sum() ?? 0m
-        });
+        const int MinPageSize = 10, MaxPageSize = 50;
+        page.ApplySizeRule(MinPageSize, MaxPageSize);
 
-        //if (!string.IsNullOrWhiteSpace(sort))
-        //{
-        //    projected = ApplySorting(projected, sort);
-        //}
+        var projected = _unitOfWork.ApplicationUser.GetQuery()
+            .ProjectTo<CustomerWithSalesInfoResponse>(_mapper.ConfigurationProvider);
 
-        var result = await projected
-            .Skip((Math.Max(1, page) - 1) * pageSize)
-            .Take(pageSize)
-            .ToListAsync() as IEnumerable<CustomerWithSalesInfoResponse>;
-
-        return Result.Ok(result);
+        if (isActive.HasValue) projected = projected.Where(x => x.IsActive == isActive.Value);
+        return Result.Ok(await projected.RetrievePage(page, BuildSortingMap(sort)));
     }
 
 

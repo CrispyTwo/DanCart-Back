@@ -35,7 +35,7 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
             {
                 UserName = email,
                 Email = email,
-                Name = "Artem",
+                FirstName = "Artem",
                 LastName = "Huzhvii",
                 PhoneNumber = "1112223333",
                 Street = "test 123 Ave",
@@ -52,7 +52,7 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
             {
                 UserName = "dmytrop@gmail.com",
                 Email = "dmytrop@gmail.com",
-                Name = "Dmytro",
+                FirstName = "Dmytro",
                 LastName = "Pochapskiy",
                 PhoneNumber = "5112273333",
                 Street = "Street Avenue",
@@ -67,9 +67,9 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
 
             IEnumerable<Product> products =
             [
-                new Product { Name = "White sugar", WeightUnit = UnitOfMeasure.Kg, Stock = 10, Price = 12.50m, LowStockThreshold = 10 },
-                new Product { Name = "Brown sugar", WeightUnit = UnitOfMeasure.G,  Stock = 20, Price = 0.0125m },
-                new Product { Name = "Flour",       WeightUnit = UnitOfMeasure.Kg, Stock = 0,  Price = 4.20m }
+                new Product { Name = "White sugar", Description = "White Sugar", WeightUnit = UnitOfMeasure.Kg, Stock = 10, Price = 12.50m, LowStockThreshold = 10 },
+                new Product { Name = "Brown sugar", Description = "Brown Sugar", WeightUnit = UnitOfMeasure.G,  Stock = 20, Price = 0.0125m },
+                new Product { Name = "Flour",       Description = "Flour",       WeightUnit = UnitOfMeasure.Kg, Stock = 0,  Price = 4.20m }
             ];
 
             _db.Products.AddRange(products);

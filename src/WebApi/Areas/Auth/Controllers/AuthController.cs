@@ -1,14 +1,10 @@
 using AutoMapper;
+using DanCart.Models.Auth;
 using DanCart.WebApi.Areas.Auth.DTOs;
+using DanCart.WebApi.Areas.Auth.Services.IServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
-using DanCart.DataAccess.Models;
-using DanCart.Models.Auth;
 
 namespace DanCart.WebApi.Areas.Auth.Controllers;
 
@@ -16,10 +12,12 @@ namespace DanCart.WebApi.Areas.Auth.Controllers;
 public class AuthController(
     UserManager<ApplicationUser> _userManager,
     SignInManager<ApplicationUser> _signInManager,
-    IConfiguration _configuration, IMapper _mapper) : ControllerBase
+    ITokenProviderService _tokenProviderService, IMapper _mapper) : ControllerBase
 {
+    public sealed record AuthResult(string Email, string Token, string RefreshToken);
+
     [HttpPost("register"), AllowAnonymous]
-    public async Task<IActionResult> Register([FromBody] UserRegisterDTO model)
+    public async Task<IActionResult> Register([FromBody] UserRegisterRequest model)
     {
         if (model.Password != model.ConfirmPassword) return BadRequest("Passwords do not match.");
         if (!ModelState.IsValid) return BadRequest(ModelState);
@@ -31,13 +29,16 @@ public class AuthController(
         result = await _userManager.AddToRoleAsync(entity, UserRole.Customer);
         if (!result.Succeeded) return BadRequest(result.Errors);
 
-        var token = await GenerateJwtToken(entity);
-        return Ok(new AuthResult { User = model.Email, Token = token });
+        var token = await _tokenProviderService.GenerateJwtToken(entity);
+        var refreshToken = await _tokenProviderService.GenerateRefreshToken(entity.Id);
+
+        return Ok(new AuthResult(model.Email, token, refreshToken));
     }
 
+    public sealed record LoginRequest(string Email, string Password);
 
     [HttpPost("login"), AllowAnonymous]
-    public async Task<IActionResult> Login([FromBody] UserLoginDTO model)
+    public async Task<IActionResult> Login([FromBody] LoginRequest model)
     {
         if (!ModelState.IsValid) return BadRequest(ModelState);
 
@@ -50,51 +51,18 @@ public class AuthController(
         user.LastLoginAt = DateTime.UtcNow;
         await _userManager.UpdateAsync(user);
 
-        var token = await GenerateJwtToken(user);
-        return Ok(new AuthResult { User = model.Email, Token = token });
+        var token = await _tokenProviderService.GenerateJwtToken(user);
+        var refreshToken = await _tokenProviderService.GenerateRefreshToken(user.Id);
+
+        return Ok(new AuthResult(model.Email, token, refreshToken));
     }
 
-    //[HttpPost("forgot-password")]
-    //public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordDto model)
-    //{
-    //    var user = await _userManager.FindByEmailAsync(model.Email);
-    //    if (user == null)
-    //        return Ok(new { message = "If the email exists, a reset link has been sent." });
-
-    //    var token = await _userManager.GeneratePasswordResetTokenAsync(user);
-    //    // Here you would send the email with the reset link
-    //    // For now, we'll just return success
-
-    //    return Ok(new { message = "If the email exists, a reset link has been sent." });
-    //}
-
-    private async Task<string> GenerateJwtToken(ApplicationUser user)
+    [HttpPost("refresh-token"), AllowAnonymous]
+    public async Task<IActionResult> Refresh([FromBody] string refreshToken)
     {
-        var claims = new List<Claim>
-        {
-            new(JwtRegisteredClaimNames.Sub, user.Id),
-            new(JwtRegisteredClaimNames.Email, user.Email),
-            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Iat, DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString(), ClaimValueTypes.Integer64)
-        };
+        var result = await _tokenProviderService.RefreshJwtToken(refreshToken);
+        if (result == null) return Unauthorized("Invalid or expired refresh token");
 
-        var roles = await _userManager.GetRolesAsync(user);
-        foreach (var role in roles)
-        {
-            claims.Add(new(ClaimTypes.Role, role));
-        }
-
-        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
-        var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
-        var expirationMinutes = int.Parse(_configuration["Jwt:ExpirationMinutes"]);
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            audience: _configuration["Jwt:Audience"],
-            claims: claims,
-            expires: DateTime.UtcNow.AddMinutes(expirationMinutes),
-            signingCredentials: creds);
-
-        return new JwtSecurityTokenHandler().WriteToken(token);
+        return Ok(new AuthResult(result.Value.user.Email!, result.Value.token, refreshToken));
     }
 }

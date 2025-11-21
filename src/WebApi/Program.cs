@@ -6,6 +6,8 @@ using DanCart.DataAccess.Repository;
 using DanCart.DataAccess.Repository.IRepository;
 using DanCart.Models.Auth;
 using DanCart.WebApi;
+using DanCart.WebApi.Areas.Auth.Services;
+using DanCart.WebApi.Areas.Auth.Services.IServices;
 using DanCart.WebApi.Areas.Customers.Services;
 using DanCart.WebApi.Areas.Customers.Services.IServices;
 using DanCart.WebApi.Areas.Products.Services;
@@ -61,6 +63,7 @@ builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBlobService, AzureBlobService>();
 
+builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<ISalesOrdersService, SalesOrdersService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();

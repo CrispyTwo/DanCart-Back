@@ -3,6 +3,7 @@ using System;
 using DanCart.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace DanCart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116102646_UpdateNameToFirstName")]
+    partial class UpdateNameToFirstName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -123,30 +126,6 @@ namespace DanCart.DataAccess.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
-            modelBuilder.Entity("DanCart.Models.Auth.RefreshToken", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens");
-                });
-
             modelBuilder.Entity("DanCart.Models.Products.Product", b =>
                 {
                     b.Property<Guid>("Id")
@@ -200,6 +179,9 @@ namespace DanCart.DataAccess.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)");
+
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
@@ -208,9 +190,6 @@ namespace DanCart.DataAccess.Migrations
 
                     b.Property<Guid>("SalesOrderId")
                         .HasColumnType("uuid");
-
-                    b.Property<decimal>("UnitPrice")
-                        .HasColumnType("decimal(10,2)");
 
                     b.HasKey("Id");
 
@@ -515,21 +494,10 @@ namespace DanCart.DataAccess.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DanCart.Models.Auth.RefreshToken", b =>
-                {
-                    b.HasOne("DanCart.Models.Auth.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DanCart.Models.SalesOrders.SalesLine", b =>
                 {
                     b.HasOne("DanCart.Models.Products.Product", "Product")
-                        .WithMany("SalesLines")
+                        .WithMany()
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -548,7 +516,7 @@ namespace DanCart.DataAccess.Migrations
             modelBuilder.Entity("DanCart.Models.SalesOrders.SalesOrder", b =>
                 {
                     b.HasOne("DanCart.Models.Auth.ApplicationUser", "User")
-                        .WithMany("SalesOrders")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -605,16 +573,6 @@ namespace DanCart.DataAccess.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("DanCart.Models.Auth.ApplicationUser", b =>
-                {
-                    b.Navigation("SalesOrders");
-                });
-
-            modelBuilder.Entity("DanCart.Models.Products.Product", b =>
-                {
-                    b.Navigation("SalesLines");
                 });
 
             modelBuilder.Entity("DanCart.Models.SalesOrders.SalesOrder", b =>

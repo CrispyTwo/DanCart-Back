@@ -1,4 +1,5 @@
 ﻿using DanCart.DataAccess.Models;
+using DanCart.DataAccess.Models.Utility;
 using DanCart.Models.Products;
 using DanCart.Products.Models.DTOs;
 using DanCart.WebApi.Areas.Products.DTOs;
@@ -8,7 +9,7 @@ namespace DanCart.WebApi.Areas.Products.Services.IServices;
 
 public interface IProductsService
 {
-    public Task<Result<IEnumerable<ProductDTO>>> GetAsync(int page, int pageSize);
+    public Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? sort);
     public Task<Result<ProductWithImagesDTO>> GetByIdAsync(Guid id);
 
     public Task<Result<ProductDTO>> CreateAsync(ProductCreateDTO dto);

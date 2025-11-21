@@ -1,2 +1,2 @@
-dotnet-ef migrations add Create --project ./src/DataAccess --startup-project ./src/WebApi
+dotnet-ef migrations add UpdatePriceToUnitPrice --project ./src/DataAccess --startup-project ./src/WebApi
 dotnet-ef database update --project ./src/DataAccess --startup-project ./src/WebApi

@@ -7,6 +7,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Threading.Tasks;
+using DanCart.WebApi.Areas.Auth.Controllers;
 
 namespace Api.FunctionalTests.Users.Abstractions;
 
@@ -23,7 +24,7 @@ internal class UserFunctions(HttpClient _client)
 
     private async Task<string> ReadToken(Func<Task<HttpResponseMessage>> func)
     {
-        var json = await (await func())!.Content.ReadFromJsonAsync<AuthResult>();
+        var json = await (await func())!.Content.ReadFromJsonAsync<AuthController.AuthResult>();
 
         if (json == null || string.IsNullOrEmpty(json.Token)) throw new UnauthorizedAccessException();
         return json.Token;

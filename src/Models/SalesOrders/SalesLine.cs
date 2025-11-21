@@ -13,14 +13,14 @@ public class SalesLine
     [Required]
     public Guid SalesOrderId { get; set; }
     [ForeignKey(nameof(SalesOrderId))]
-    public SalesOrder SalesOrder { get; set; }
+    public SalesOrder? SalesOrder { get; set; }
 
     [Required]
     public Guid ProductId { get; set; }
     [ForeignKey(nameof(ProductId))]
-    public Product Product { get; set; }
+    public Product? Product { get; set; }
 
     public int Quantity { get; set; }
     [Column(TypeName = SqlColumnTypes.Decimal10_2)]
-    public decimal Price { get; set; }
+    public decimal UnitPrice { get; set; }
 }
