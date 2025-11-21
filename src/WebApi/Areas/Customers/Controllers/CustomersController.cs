@@ -1,4 +1,5 @@
 ﻿
+using DanCart.DataAccess.Models.Utility;
 using DanCart.Models.Auth;
 using DanCart.WebApi.Areas.Customers.Services.IServices;
 using DanCart.WebApi.Core;
@@ -14,7 +15,7 @@ public class CustomersController(ICustomerService _customerService) : APIControl
     public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1, 
         [FromQuery] bool? isActive = null, [FromQuery] string? sort = null)
     {
-        var result = await _customerService.GetCustomersWithSalesAsync(page, pageSize, isActive, sort);
+        var result = await _customerService.GetCustomersWithSalesAsync(new Page(page, pageSize), isActive, sort);
         return CreateHttpResponse(result);
     }
 

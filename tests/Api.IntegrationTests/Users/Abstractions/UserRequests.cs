@@ -1,19 +1,16 @@
 ﻿using DanCart.WebApi.Areas.Auth.DTOs;
+using static DanCart.WebApi.Areas.Auth.Controllers.AuthController;
 
 namespace Api.FunctionalTests.Users.Abstractions;
 
 internal class UserRequests
 {
     internal const string BaseUrl = "/api/v1/Auth";
-    internal static UserLoginDTO GetLoginAdmin => new()
-    {
-        Email = "Admin@gmail.com",
-        Password = "Admin123*"
-    };
+    internal static LoginRequest GetLoginAdmin => new("Admin@gmail.com", "Admin123*");
 
-    internal static UserRegisterDTO GetRegistrationUser1 => new()
+    internal static UserRegisterRequest GetRegistrationUser1 => new()
     {
-        Name = "Ibrahim",
+        FirstName = "Ibrahim",
         LastName = "Sanches",
         Email = "ibrahim.sanches@gmail.com",
         Phone = "123456789",
@@ -21,15 +18,11 @@ internal class UserRequests
         ConfirmPassword = "Password123!"
     };
 
-    internal static UserLoginDTO GetLoginUser1 => new()
-    {
-        Email = GetRegistrationUser1.Email,
-        Password = GetRegistrationUser1.Password
-    };
+    internal static LoginRequest GetLoginUser1 => new(GetRegistrationUser1.Email, GetRegistrationUser1.Password);
 
-    internal static UserRegisterDTO GetRegistrationUser2 => new()
+    internal static UserRegisterRequest GetRegistrationUser2 => new()
     {
-        Name = "Artem",
+        FirstName = "Artem",
         LastName = "Kozlov",
         Email = "artem.kozlov@gmail.com",
         Phone = "12357431",
@@ -37,9 +30,5 @@ internal class UserRequests
         ConfirmPassword = "123456789/Qw"
     };
 
-    internal static UserLoginDTO GetLoginUser2 => new()
-    {
-        Email = GetRegistrationUser2.Email,
-        Password = GetRegistrationUser2.Password
-    };
+    internal static LoginRequest GetLoginUser2 => new(GetRegistrationUser2.Email, GetRegistrationUser2.Password);
 }

@@ -1,4 +1,5 @@
 ﻿using DanCart.DataAccess.Data;
+using DanCart.DataAccess.Extensions;
 using DanCart.DataAccess.Models.Utility;
 using DanCart.DataAccess.Repository.IRepository;
 using Microsoft.EntityFrameworkCore;
@@ -46,31 +47,16 @@ public class Repository<T> : IRepository<T> where T : class
         {
             if (options.Filter != null) query = query.Where(options.Filter);
 
-            var sortString = BuildSortString(options.Sortings);
-            if (!string.IsNullOrWhiteSpace(sortString))
-                query = query.OrderBy(new() { RestrictOrderByToPropertyOrField = true }, sortString);
-
+            query = query.ApplySorting(options.Sortings);
             foreach (var property in options.IncludeProperties)
                 query = query.Include(property.Trim());
         }
 
-        return await query.Skip((Math.Max(1, page.Number) - 1) * page.Size).Take(page.Size).ToListAsync();
-    }
-
-    private string? BuildSortString(IEnumerable<(string Name, bool Desc)> sortings)
-    {
-        var parts = new List<string>();
-        foreach (var (name, desc) in sortings)
-        {
-            if (string.IsNullOrWhiteSpace(name)) continue;
-            parts.Add(name + (desc ? " DESC" : ""));
-        }
-
-        return parts.Count == 0 ? null : string.Join(", ", parts);
+        return await query.Paginate(page).ToListAsync();
     }
 
     public void Update(T entity) => _dbSet.Update(entity);
     public void Remove(T entity) => _dbSet.Remove(entity);
     public void RemoveRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
-    public IQueryable<T> GetQuery() => _dbSet;
+    public IQueryable<T> GetQuery() => _dbSet.AsNoTracking();
 }

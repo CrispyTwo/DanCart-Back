@@ -5,7 +5,6 @@ WORKDIR /workspace
 
 COPY ["src/DataAccess/DataAccess.csproj", "src/DataAccess/"]
 COPY ["src/Models/Models.csproj", "src/Models/"]
-COPY ["src/Utility/Utility.csproj", "src/Utility/"]
 COPY ["src/WebApi/WebApi.csproj", "src/WebApi/"]
 
 COPY ["DanCartBack.sln", "./"]

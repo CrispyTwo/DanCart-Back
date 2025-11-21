@@ -1,3 +1,4 @@
+using DanCart.Models.SalesOrders;
 using DanCart.Models.Utility;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -10,10 +11,13 @@ public class Product
     public Guid Id { get; set; } = Guid.NewGuid();
 
     [Required, MaxLength(200)]
-    public string Name { get; set; } = string.Empty;
+    public required string Name { get; set; }
 
-    [MaxLength(2000)]
-    public string Description { get; set; } = string.Empty;
+    [Required, MaxLength(2000)]
+    public required string Description { get; set; }
+
+    public ICollection<SalesLine> SalesLines { get; set; } = [];
+
 
     [Column(TypeName = SqlColumnTypes.Decimal10_2)]
     public decimal Price { get; set; }
@@ -23,11 +27,13 @@ public class Product
 
     public bool IsActive { get; set; } = true;
 
+
     [Column(TypeName = SqlColumnTypes.Decimal10_2)]
     public decimal Weight { get; set; } = 1m;
 
     [MaxLength(5)]
     public UnitOfMeasure WeightUnit { get; set; } = UnitOfMeasure.Kg;
+
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

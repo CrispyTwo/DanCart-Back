@@ -1,25 +1,43 @@
 ﻿using AutoMapper;
 using DanCart.DataAccess.Blob;
-using DanCart.DataAccess.Repository.IRepository;
-using DanCart.Products.Models.DTOs;
-using DanCart.WebApi.Areas.Products.Services.IServices;
-using DanCart.WebApi.Areas.Products.DTOs;
-using FluentResults;
-using DanCart.WebApi.Core;
 using DanCart.DataAccess.Models;
-using DanCart.Models.Products;
 using DanCart.DataAccess.Models.Utility;
+using DanCart.DataAccess.Repository;
+using DanCart.DataAccess.Repository.IRepository;
+using DanCart.Models.Auth;
+using DanCart.Models.Products;
+using DanCart.Products.Models.DTOs;
+using DanCart.WebApi.Areas.Products.DTOs;
+using DanCart.WebApi.Areas.Products.Services.IServices;
+using DanCart.WebApi.Core;
+using FluentResults;
+using System.Linq.Expressions;
 
 namespace DanCart.WebApi.Areas.Products.Services;
 
 public class ProductsService(IUnitOfWork _unitOfWork, IMapper _mapper, IBlobService _blobService) : ServiceBase, IProductsService
 {
-    public async Task<Result<IEnumerable<ProductDTO>>> GetAsync(int page, int pageSize)
+    public async Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? sort)
     {
         const int MinPageSize = 10, MaxPageSize = 50;
-        pageSize = GetPageSize(pageSize, MinPageSize, MaxPageSize);
+        page.ApplySizeRule(MinPageSize, MaxPageSize);
 
-        var products = await _unitOfWork.Product.GetRangeAsync(new Page { Number = page, Size = pageSize });
+        Expression<Func<Product, bool>>? filter = null;
+        switch (status)
+        {
+            case ProductStockStatus.InStock:
+                filter = x => x.Stock > x.LowStockThreshold;
+                break;
+            case ProductStockStatus.LowStock:
+                filter = x => x.Stock <= x.LowStockThreshold && x.Stock > 0;
+                break;
+            case ProductStockStatus.OutOfStock:
+                filter = x => x.Stock <= 0;
+                break;
+        }
+
+        var options = new GetRangeOptions<Product>() { Sortings = BuildSortingMap(sort), Filter = filter };
+        var products = await _unitOfWork.Product.GetRangeAsync(page, options);
         var result = _mapper.Map<IEnumerable<ProductDTO>>(products);
         return Result.Ok(result);
     }

@@ -10,7 +10,7 @@ public class SalesOrderWithLinesDTO
     public required string Phone { get; set; }
     public string? Name { get; set; }
     public decimal Total { get; set; }
-    public required IEnumerable<SalesLine> Lines { get; set; }
+    public required IEnumerable<SalesLineDTO> Lines { get; set; }
     public DateTime OrderDate { get; set; }
     public SalesOrderStatus OrderStatus { get; set; }
 }

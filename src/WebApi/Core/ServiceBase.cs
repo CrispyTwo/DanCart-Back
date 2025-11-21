@@ -4,7 +4,6 @@ namespace DanCart.WebApi.Core;
 
 public class ServiceBase
 {
-    protected int GetPageSize(int pageSize, int minPageSize, int maxPageSize) => Math.Clamp(pageSize, minPageSize, maxPageSize);
     protected IEnumerable<(string Name, bool Desc)> BuildSortingMap(string? sorts)
     {
         if (string.IsNullOrWhiteSpace(sorts)) yield break;

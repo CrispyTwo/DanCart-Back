@@ -68,7 +68,7 @@ public class UserTests(FunctionalTestWebAppFactory factory) : BaseFunctionalTest
     {
         var registerRequest = UserRequests.GetRegistrationUser1;
         var loginRequest = UserRequests.GetLoginUser1;
-        loginRequest.Password = "OtherPassword";
+        loginRequest = new(UserRequests.GetLoginUser1.Email, "OtherPassword");
 
         var registerResponse = await HttpClient.PostAsJsonAsync($"{UserRequests.BaseUrl}/register", registerRequest);
         registerResponse.StatusCode.Should().Be(System.Net.HttpStatusCode.OK);

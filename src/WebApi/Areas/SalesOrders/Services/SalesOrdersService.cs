@@ -1,4 +1,6 @@
 ﻿using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using DanCart.DataAccess.Extensions;
 using DanCart.DataAccess.Models.Utility;
 using DanCart.DataAccess.Repository;
 using DanCart.DataAccess.Repository.IRepository;
@@ -15,36 +17,29 @@ namespace DanCart.WebApi.Areas.SalesOrders.Services;
 
 public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : ServiceBase, ISalesOrdersService
 {
-    public async Task<Result<IEnumerable<SalesOrderWithLinesDTO>>> GetAsync(string? userId, int page, int pageSize, bool isAdmin)
+    public async Task<Result<IEnumerable<SalesOrderWithLinesDTO>>> GetAsync(string? userId, Page page, string? sort, bool isAdmin)
     {
         const int MinPageSize = 5, MaxPageSize = 25;
-        pageSize = GetPageSize(pageSize, MinPageSize, MaxPageSize);
+        page.ApplySizeRule(MinPageSize, MaxPageSize);
 
         var options = new GetRangeOptions<SalesOrder>();
         if (!isAdmin) options.Filter = o => o.UserId == userId;
 
-        var orders = await _unitOfWork.SalesOrder.GetRangeAsync(new Page { Number = page, Size = pageSize }, options);
-        var orderIds = orders.Select(o => o.Id).ToHashSet();
+        var orders = _unitOfWork.SalesOrder.GetQuery()
+            .Include(x => x.SalesLines)
+            .ProjectTo<SalesOrderWithLinesDTO>(_mapper.ConfigurationProvider);
 
-        var lines = await _unitOfWork.SalesLine.GetQuery().AsNoTracking()
-            .Where(sl => orderIds.Contains(sl.SalesOrderId))
-            .ToListAsync();
-
-        var linesByOrder = lines.GroupBy(l => l.SalesOrderId).ToDictionary(g => g.Key, g => g.ToList());
-        var result = _mapper.Map<IEnumerable<SalesOrderWithLinesDTO>>(orders);
-        foreach (var orderDto in result)
-        {
-            orderDto.Lines = linesByOrder[orderDto.Id] ?? [];
-            orderDto.Total = orderDto.Lines.Sum(x => x.Price * x.Quantity);
-        }
-
-        return Result.Ok(result);
+        return Result.Ok(await orders.RetrievePage(page, BuildSortingMap(sort)));
     }
 
     public async Task<Result<SalesOrderWithLinesDTO>> GetAsync(string userId, Guid id, bool isAdmin)
     {
-        Expression<Func<SalesOrder, bool>> filter = isAdmin ? x => x.Id == id : x => x.Id == id && x.UserId == userId;
-        var order = await _unitOfWork.SalesOrder.GetAsync(filter);
+        var order = await _unitOfWork.SalesOrder.GetQuery()
+            .Where(isAdmin ? x => x.Id == id : x => x.Id == id && x.UserId == userId)
+            .Include(x => x.SalesLines)
+            .ProjectTo<SalesOrderWithLinesDTO>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync();
+
         if (order == null)
         {
             return Result.Fail<SalesOrderWithLinesDTO>(
@@ -52,15 +47,7 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
                     .WithMetadata(ErrorMetadata.Code, ErrorCode.NotFound));
         }
 
-        var lines = await _unitOfWork.SalesLine.GetQuery().AsNoTracking()
-            .Where(sl => sl.SalesOrderId == order.Id)
-            .ToListAsync();
-
-        var result = _mapper.Map<SalesOrderWithLinesDTO>(order);
-        result.Lines = lines;
-        result.Total = lines.Sum(x => x.Price * x.Quantity);
-
-        return Result.Ok(result);
+        return Result.Ok(order);
     }
 
     public async Task<Result<SalesOrderWithLinesDTO>> CreateAsync(string userId, SalesOrderCreateDTO model)
@@ -86,7 +73,7 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
             }
 
             line.SalesOrder = entity;
-            line.Price = product.Price;
+            line.UnitPrice = product.Price;
             product.Stock -= line.Quantity;
 
             await _unitOfWork.SalesLine.AddAsync(line);

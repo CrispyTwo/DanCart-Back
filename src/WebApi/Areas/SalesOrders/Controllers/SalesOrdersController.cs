@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using DanCart.WebApi.Core;
 using DanCart.Models.Auth;
+using DanCart.DataAccess.Models.Utility;
 
 namespace DanCart.WebApi.Areas.SalesOrders.Controllers;
 
@@ -13,9 +14,9 @@ public class SalesOrdersController(ISalesOrdersService _orderService) : APIContr
 {
     #region CRUD APIs
     [HttpGet]
-    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1)
+    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1, [FromQuery] string? sort = null)
     {
-        var result = await _orderService.GetAsync(User.GetUserId(), page, pageSize, User.IsAdmin());
+        var result = await _orderService.GetAsync(User.GetUserId(), new Page(page, pageSize), sort, User.IsAdmin());
         return CreateHttpResponse(result);
     }
 

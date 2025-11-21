@@ -4,6 +4,7 @@ using DanCart.Models.Products;
 using DanCart.Models.SalesOrders;
 using DanCart.Products.Models.DTOs;
 using DanCart.WebApi.Areas.Auth.DTOs;
+using DanCart.WebApi.Areas.Customers.DTOs.Metrics;
 using DanCart.WebApi.Areas.Products.DTOs;
 using DanCart.WebApi.Areas.SalesOrders.DTOs;
 using DanCart.WebApi.Areas.SalesOrders.SalesLines.DTOs;
@@ -14,8 +15,13 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
-        CreateMap<UserRegisterDTO, ApplicationUser>()
+        CreateMap<UserRegisterRequest, ApplicationUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
+
+        CreateMap<ApplicationUser, CustomerWithSalesInfoResponse>()
+            .ForMember(d => d.OrdersCount, o => o.MapFrom(s => s.SalesOrders.LongCount()))
+            .ForMember(d => d.TotalSpent, o => o.MapFrom(s => 
+                s.SalesOrders.SelectMany(sl => sl.SalesLines).Sum(x => x.Quantity * x.UnitPrice)));
 
         CreateMap<ProductCreateDTO, Product>();
         CreateMap<ProductUpdateDTO, Product>();
@@ -24,8 +30,12 @@ public class MappingProfile : Profile
 
         CreateMap<SalesOrderCreateDTO, SalesOrder>();
         CreateMap<SalesOrderUpdateDTO, SalesOrder>();
-        CreateMap<SalesOrder, SalesOrderWithLinesDTO>();
+        CreateMap<SalesOrder, SalesOrderWithLinesDTO>()
+            .ForMember(d => d.Lines, o => o.MapFrom(s => s.SalesLines))
+            .ForMember(d => d.Total, o => o.MapFrom(s => s.SalesLines.Sum(x => x.Quantity * x.UnitPrice)));
+
         CreateMap<SalesLineCreateDTO, SalesLine>();
         CreateMap<SalesLineUpdateDTO, SalesLine>();
+        CreateMap<SalesLine, SalesLineDTO>();
     }
 }

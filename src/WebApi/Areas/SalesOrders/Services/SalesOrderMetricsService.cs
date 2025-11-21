@@ -48,7 +48,7 @@ public class SalesOrderMetricsService(IUnitOfWork _unitOfWork) : ISalesOrderMetr
                         .GroupBy(l => l.SalesOrderId)
                         .Select(g => new
                         {
-                            OrderTotal = g.Sum(l => (decimal?)(l.Quantity * l.Price)) ?? 0m
+                            OrderTotal = g.Sum(l => (decimal?)(l.Quantity * l.UnitPrice)) ?? 0m
                         })
                         .GroupBy(x => 1)
                         .Select(g => new

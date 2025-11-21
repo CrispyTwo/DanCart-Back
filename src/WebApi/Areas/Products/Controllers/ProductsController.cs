@@ -1,10 +1,12 @@
+using DanCart.DataAccess.Models.Utility;
+using DanCart.Models.Auth;
+using DanCart.Models.Products;
 using DanCart.Products.Models.DTOs;
-using DanCart.WebApi.Areas.Products.Services.IServices;
 using DanCart.WebApi.Areas.Products.DTOs;
+using DanCart.WebApi.Areas.Products.Services.IServices;
+using DanCart.WebApi.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using DanCart.WebApi.Core;
-using DanCart.Models.Auth;
 
 namespace DanCart.WebApi.Areas.Products.Controllers;
 
@@ -13,9 +15,11 @@ public class ProductsController(IProductsService _productService) : APIControlle
 {
     #region CRUD APIs
     [HttpGet, AllowAnonymous]
-    public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1)
+    public async Task<IActionResult> Get(
+        [FromQuery] int page = 1, [FromQuery] int pageSize = 1, 
+        [FromQuery] ProductStockStatus? status = null, [FromQuery] string? sort = null)
     {
-        var result = await _productService.GetAsync(page, pageSize);
+        var result = await _productService.GetAsync(new Page(page, pageSize), status, sort);
         return CreateHttpResponse(result);
     }
 
