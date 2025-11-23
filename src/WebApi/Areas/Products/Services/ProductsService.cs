@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DanCart.DataAccess.Blob;
+using DanCart.DataAccess.Extensions;
 using DanCart.DataAccess.Models;
 using DanCart.DataAccess.Models.Utility;
 using DanCart.DataAccess.Repository;
@@ -11,33 +12,33 @@ using DanCart.WebApi.Areas.Products.DTOs;
 using DanCart.WebApi.Areas.Products.Services.IServices;
 using DanCart.WebApi.Core;
 using FluentResults;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace DanCart.WebApi.Areas.Products.Services;
 
 public class ProductsService(IUnitOfWork _unitOfWork, IMapper _mapper, IBlobService _blobService) : ServiceBase, IProductsService
 {
-    public async Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? sort)
+    public async Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? sort, string? search)
     {
         const int MinPageSize = 10, MaxPageSize = 50;
         page.ApplySizeRule(MinPageSize, MaxPageSize);
 
-        Expression<Func<Product, bool>>? filter = null;
+        var query = _unitOfWork.Product.GetQuery();
         switch (status)
         {
             case ProductStockStatus.InStock:
-                filter = x => x.Stock > x.LowStockThreshold;
+                query = query.Where(x => x.Stock > x.LowStockThreshold);
                 break;
             case ProductStockStatus.LowStock:
-                filter = x => x.Stock <= x.LowStockThreshold && x.Stock > 0;
+                query = query.Where(x => x.Stock <= x.LowStockThreshold && x.Stock > 0);
                 break;
             case ProductStockStatus.OutOfStock:
-                filter = x => x.Stock <= 0;
+                query = query.Where(x => x.Stock <= 0);
                 break;
         }
 
-        var options = new GetRangeOptions<Product>() { Sortings = BuildSortingMap(sort), Filter = filter };
-        var products = await _unitOfWork.Product.GetRangeAsync(page, options);
+        var products = await query.GetPageAsync(page, BuildSortingMap(sort), search);
         var result = _mapper.Map<IEnumerable<ProductDTO>>(products);
         return Result.Ok(result);
     }

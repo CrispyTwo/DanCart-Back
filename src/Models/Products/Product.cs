@@ -2,10 +2,11 @@ using DanCart.Models.SalesOrders;
 using DanCart.Models.Utility;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using NpgsqlTypes;
 
 namespace DanCart.Models.Products;
 
-public class Product
+public class Product : IFullTextSearchable
 {
     [Key]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -37,4 +38,5 @@ public class Product
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+    public NpgsqlTsVector SearchVector { get; set; } = default!;
 }

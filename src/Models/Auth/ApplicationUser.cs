@@ -1,11 +1,13 @@
 using DanCart.Models.SalesOrders;
+using DanCart.Models.Utility;
 using Microsoft.AspNetCore.Identity;
+using NpgsqlTypes;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DanCart.Models.Auth;
 
-public class ApplicationUser : IdentityUser
+public class ApplicationUser : IdentityUser, IFullTextSearchable
 {
     [Required, MaxLength(100), ProtectedPersonalData]
     public required string FirstName { get; set; }
@@ -27,4 +29,5 @@ public class ApplicationUser : IdentityUser
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
     public bool IsActive { get; set; } = true;
+    public NpgsqlTsVector SearchVector { get; set; } = default!;
 }

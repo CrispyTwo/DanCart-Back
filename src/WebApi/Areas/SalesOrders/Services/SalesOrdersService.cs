@@ -29,7 +29,7 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
             .Include(x => x.SalesLines)
             .ProjectTo<SalesOrderWithLinesDTO>(_mapper.ConfigurationProvider);
 
-        return Result.Ok(await orders.RetrievePage(page, BuildSortingMap(sort)));
+        return Result.Ok(await orders.GetPageAsync(page, BuildSortingMap(sort)));
     }
 
     public async Task<Result<SalesOrderWithLinesDTO>> GetAsync(string userId, Guid id, bool isAdmin)

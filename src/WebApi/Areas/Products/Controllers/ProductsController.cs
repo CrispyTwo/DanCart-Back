@@ -17,9 +17,11 @@ public class ProductsController(IProductsService _productService) : APIControlle
     [HttpGet, AllowAnonymous]
     public async Task<IActionResult> Get(
         [FromQuery] int page = 1, [FromQuery] int pageSize = 1, 
-        [FromQuery] ProductStockStatus? status = null, [FromQuery] string? sort = null)
+        [FromQuery] ProductStockStatus? status = null, 
+        [FromQuery] string? sort = null,
+        [FromQuery] string? search = null)
     {
-        var result = await _productService.GetAsync(new Page(page, pageSize), status, sort);
+        var result = await _productService.GetAsync(new Page(page, pageSize), status, sort, search);
         return CreateHttpResponse(result);
     }
 
