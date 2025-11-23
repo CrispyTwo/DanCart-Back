@@ -15,32 +15,21 @@ namespace DanCart.WebApi.Areas.Customers.Services;
 
 public class CustomerService(IUnitOfWork _unitOfWork, IMapper _mapper) : ServiceBase, ICustomerService
 {
-    public async Task<Result<IEnumerable<ApplicationUser>>> GetAsync(
-        Page page, bool? isActive, string? sort)
-    {
-        const int MinPageSize = 10, MaxPageSize = 50;
-        page.ApplySizeRule(MinPageSize, MaxPageSize);
-
-        Expression<Func<ApplicationUser, bool>>? filter = null;
-        if (isActive.HasValue) filter = x => x.IsActive == isActive.Value;
-
-        var sortings = BuildSortingMap(sort);
-        var options = new GetRangeOptions<ApplicationUser>() { Filter = filter, Sortings = sortings };
-
-        return Result.Ok(await _unitOfWork.ApplicationUser.GetRangeAsync(page, options));
-    }
-
     public async Task<Result<IEnumerable<CustomerWithSalesInfoResponse>>> GetCustomersWithSalesAsync(
-        Page page, bool? isActive, string? sort)
+        Page page, bool? isActive, string? sort, string? search)
     {
         const int MinPageSize = 10, MaxPageSize = 50;
         page.ApplySizeRule(MinPageSize, MaxPageSize);
 
-        var projected = _unitOfWork.ApplicationUser.GetQuery()
-            .ProjectTo<CustomerWithSalesInfoResponse>(_mapper.ConfigurationProvider);
+        var query = _unitOfWork.ApplicationUser.GetQuery();
+        if (!string.IsNullOrWhiteSpace(search))
+            query = query.ApplyFullTextSearch(search).OrderByDescending(x => x.Rank).Select(x => x.Entity);
+            
+
+        var projected = query.ProjectTo<CustomerWithSalesInfoResponse>(_mapper.ConfigurationProvider);
 
         if (isActive.HasValue) projected = projected.Where(x => x.IsActive == isActive.Value);
-        return Result.Ok(await projected.RetrievePage(page, BuildSortingMap(sort)));
+        return Result.Ok(await projected.GetPageAsync(page, BuildSortingMap(sort)));
     }
 
 

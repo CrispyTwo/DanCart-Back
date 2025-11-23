@@ -13,9 +13,10 @@ public class CustomersController(ICustomerService _customerService) : APIControl
 {
     [HttpGet]
     public async Task<IActionResult> Get([FromQuery] int page = 1, [FromQuery] int pageSize = 1, 
-        [FromQuery] bool? isActive = null, [FromQuery] string? sort = null)
+        [FromQuery] bool? isActive = null, [FromQuery] string? sort = null,
+        [FromQuery] string? search = null)
     {
-        var result = await _customerService.GetCustomersWithSalesAsync(new Page(page, pageSize), isActive, sort);
+        var result = await _customerService.GetCustomersWithSalesAsync(new Page(page, pageSize), isActive, sort, search);
         return CreateHttpResponse(result);
     }
 
