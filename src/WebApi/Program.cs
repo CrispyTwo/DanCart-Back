@@ -14,6 +14,8 @@ using DanCart.WebApi.Areas.Products.Services;
 using DanCart.WebApi.Areas.Products.Services.IServices;
 using DanCart.WebApi.Areas.SalesOrders.Services;
 using DanCart.WebApi.Areas.SalesOrders.Services.IServices;
+using DanCart.WebApi.Areas.ShoppingCarts.Services;
+using DanCart.WebApi.Areas.ShoppingCarts.Services.IServices;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -71,6 +73,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<ICustomerMetricsService, CustomerMetricsService>();
 builder.Services.AddScoped<IProductMetricsService, ProductMetricsService>();
 builder.Services.AddScoped<ISalesOrderMetricsService, SalesOrderMetricsService>();
+builder.Services.AddScoped<IShoppingCartService, ShoppingCartService>();
 
 builder.Services.AddControllers();
 builder.Services.AddAutoMapper(cfg => { cfg.AddProfile<MappingProfile>(); });

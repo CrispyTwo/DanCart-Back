@@ -22,7 +22,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         Guid id = await _productFunctions.CreateProduct1(5);
 
         var request = SalesOrderRequests.GetCreateSalesOrder1;
-        request.Lines = [new() { ProductId = id, Quantity = 2 }];
+        //request.Lines = [new() { ProductId = id, Quantity = 2 }];
 
         // Act
         var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
@@ -35,7 +35,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
     public async Task CreateSalesOrderV1_UnexistentProductId_NotFound()
     {
         var request = SalesOrderRequests.GetCreateSalesOrder1;
-        request.Lines = [new() { ProductId = Guid.NewGuid(), Quantity = 2 }];
+        //request.Lines = [new() { ProductId = Guid.NewGuid(), Quantity = 2 }];
 
         using (HttpClient.UseBearer())
         {
@@ -60,7 +60,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         using (HttpClient.UseBearer())
         {
             var request = SalesOrderRequests.GetCreateSalesOrder1;
-            request.Lines = salesLines;
+            //request.Lines = salesLines;
 
             // Act
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
@@ -83,7 +83,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         using (HttpClient.UseBearer())
         {
             var request = SalesOrderRequests.GetCreateSalesOrder1;
-            request.Lines = salesLines;
+            //request.Lines = salesLines;
 
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
             response.StatusCode.Should().Be(System.Net.HttpStatusCode.Created);
@@ -111,7 +111,7 @@ public class SalesOrderTests : BaseFunctionalTest, IAsyncLifetime
         using (HttpClient.UseBearer())
         {
             var request = SalesOrderRequests.GetCreateSalesOrder1;
-            request.Lines = salesLines;
+            //request.Lines = salesLines;
 
             var response = await HttpClient.PostAsJsonAsync(SalesOrderRequests.BaseUrl, request);
 

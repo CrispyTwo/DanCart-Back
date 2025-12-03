@@ -9,6 +9,7 @@ public interface IUnitOfWork
     ISalesLineRepository SalesLine { get; }
     IProductRepository Product { get; }
     IStoreRepository Store { get; }
+    IShoppingCartRepository ShoppingCart { get; }
     Task SaveAsync();
     Task<bool> TrySaveAsync();
 }

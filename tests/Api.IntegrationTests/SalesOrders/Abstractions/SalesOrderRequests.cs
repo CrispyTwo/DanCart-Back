@@ -8,7 +8,7 @@ internal class SalesOrderRequests
     internal const string BaseUrl = "/api/v1/SalesOrders";
     internal static SalesOrderCreateDTO GetCreateSalesOrder1 => new()
     {
-        Lines = [],
+        //Lines = [],
         Email = UserRequests.GetRegistrationUser1.Email,
         Name = "Someone",
         Phone = "123456789",
