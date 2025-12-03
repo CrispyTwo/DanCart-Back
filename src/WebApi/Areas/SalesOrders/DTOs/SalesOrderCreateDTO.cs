@@ -4,7 +4,7 @@ namespace DanCart.WebApi.Areas.SalesOrders.DTOs;
 
 public class SalesOrderCreateDTO
 {
-    public SalesLineCreateDTO[] Lines { get; set; }
+    //public SalesLineCreateDTO[] Lines { get; set; }
 
     public string Phone { get; set; }
     public string Street { get; set; }

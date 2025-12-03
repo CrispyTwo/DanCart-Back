@@ -15,6 +15,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     public DbSet<Product> Products { get; set; }
     public DbSet<SalesOrder> SalesOrders { get; set; }
     public DbSet<SalesLine> SalesLines { get; set; }
+    public DbSet<ShoppingCart> ShoppingCarts { get; set; }
     public DbSet<RefreshToken> RefreshTokens { get; set; }
     public new DbSet<ApplicationUser> Users { get; set; }
 
@@ -39,5 +40,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
         builder.Entity<ApplicationUser>()
             .HasIndex(x => x.Email)
             .IsUnique();
+
+        builder.Entity<ShoppingCart>()
+            .HasKey(x => new { x.UserId, x.ProductId });
     }
 }

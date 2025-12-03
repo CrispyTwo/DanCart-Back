@@ -8,6 +8,7 @@ using DanCart.WebApi.Areas.Customers.DTOs.Metrics;
 using DanCart.WebApi.Areas.Products.DTOs;
 using DanCart.WebApi.Areas.SalesOrders.DTOs;
 using DanCart.WebApi.Areas.SalesOrders.SalesLines.DTOs;
+using DanCart.WebApi.Areas.ShoppingCarts.DTOs;
 
 namespace DanCart.WebApi;
 
@@ -37,5 +38,14 @@ public class MappingProfile : Profile
         CreateMap<SalesLineCreateDTO, SalesLine>();
         CreateMap<SalesLineUpdateDTO, SalesLine>();
         CreateMap<SalesLine, SalesLineDTO>();
+
+        CreateMap<Product, SalesLine>();
+        CreateMap<IEnumerable<ShoppingCart>, SalesOrder>()
+            .ForMember(dest => dest.SalesLines, opt => opt.MapFrom(src => src));
+
+        CreateMap<ShoppingCart, SalesLine>();
+        CreateMap<ShoppingCart, CartItemDTO>();
+        CreateMap<IEnumerable<ShoppingCart>, ShoppingCartDTO>()
+            .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src));
     }
 }

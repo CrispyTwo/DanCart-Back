@@ -52,11 +52,15 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
 
     public async Task<Result<SalesOrderWithLinesDTO>> CreateAsync(string userId, SalesOrderCreateDTO model)
     {
-        var entity = _mapper.Map<SalesOrder>(model);
-        entity.UserId = userId;
-        await _unitOfWork.SalesOrder.AddAsync(entity);
+        var salesOrder = _mapper.Map<SalesOrder>(model);
+        salesOrder.UserId = userId;
+        await _unitOfWork.SalesOrder.AddAsync(salesOrder);
 
-        var lines = _mapper.Map<SalesLine[]>(model.Lines);
+        var carts = await _unitOfWork.ShoppingCart.GetQuery()
+            .Where(x => x.UserId == userId)
+            .ToListAsync();
+
+        var lines = _mapper.Map<List<SalesLine>>(carts);
         foreach (var line in lines)
         {
             var product = await _unitOfWork.Product.GetAsync(x => x.Id == line.ProductId, tracked: true);
@@ -72,7 +76,7 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
                         .WithMetadata(ErrorMetadata.Code, ErrorCode.Conflict));
             }
 
-            line.SalesOrder = entity;
+            line.SalesOrder = salesOrder;
             line.UnitPrice = product.Price;
             product.Stock -= line.Quantity;
 
@@ -82,7 +86,7 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
         if (!await _unitOfWork.TrySaveAsync())
             return DefaultServerError<SalesOrderWithLinesDTO>();
 
-        var result = _mapper.Map<SalesOrderWithLinesDTO>(entity);
+        var result = _mapper.Map<SalesOrderWithLinesDTO>(salesOrder);
         return Result.Ok(result);
     }
 
