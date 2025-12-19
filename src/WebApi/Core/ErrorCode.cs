@@ -4,5 +4,6 @@ public enum ErrorCode
 {
     NotFound,
     Conflict,
-    ServerError
+    ServerError,
+    UnprocessableEntity
 }

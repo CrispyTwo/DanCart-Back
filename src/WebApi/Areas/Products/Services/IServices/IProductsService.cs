@@ -9,7 +9,7 @@ namespace DanCart.WebApi.Areas.Products.Services.IServices;
 
 public interface IProductsService
 {
-    public Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? sort, string? search);
+    public Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? priceRange, string[]? categories, string? sort, string? search);
     public Task<Result<ProductWithImagesDTO>> GetByIdAsync(Guid id);
 
     public Task<Result<ProductDTO>> CreateAsync(ProductCreateDTO dto);

@@ -9,6 +9,8 @@ public interface ISalesOrdersService
 {
     public Task<Result<IEnumerable<SalesOrderWithLinesDTO>>> GetAsync(string userId, Page page, string? sort, bool isAdmin);
     public Task<Result<SalesOrderWithLinesDTO>> GetAsync(string userId, Guid id, bool isAdmin);
-    public Task<Result<SalesOrderWithLinesDTO>> CreateAsync(string userId, SalesOrderCreateDTO model);
+    public Task<Result<SalesOrderWithLinesDTO>> CreateAsync(string userId, SalesOrderCreateDTO model, IEnumerable<ShoppingCart> cart);
     public Task<Result> DeleteAsync(string userId, Guid id, bool isAdmin);
+
+    public Task<Result> SucceedPayment(string paymentIntent);
 }

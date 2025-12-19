@@ -67,10 +67,18 @@ public class DBInitializer(ApplicationDbContext db, UserManager<ApplicationUser>
 
             IEnumerable<Product> products =
             [
-                new Product { Name = "White sugar", Description = "White Sugar", WeightUnit = UnitOfMeasure.Kg, Stock = 10, Price = 12.50m, LowStockThreshold = 10 },
-                new Product { Name = "Brown sugar", Description = "Brown Sugar", WeightUnit = UnitOfMeasure.G,  Stock = 20, Price = 0.0125m },
-                new Product { Name = "Flour",       Description = "Flour",       WeightUnit = UnitOfMeasure.Kg, Stock = 0,  Price = 4.20m }
+                new Product { Name = "Classic White Tee", Description = "100% cotton crew neck t-shirt", Colors = "White,Black,Navy", Category = "T-Shirt", WeightUnit = UnitOfMeasure.Kg, Stock = 45, Price = 19.99m, LowStockThreshold = 5 },
+                new Product { Name = "Oxford Button-Down Shirt", Description = "Long-sleeve oxford shirt, tailored fit", Colors = "Blue,White,Pink", Category = "T-Shirt", WeightUnit = UnitOfMeasure.Kg, Stock = 30, Price = 49.50m, LowStockThreshold = 6 },
+                new Product { Name = "Slim Fit Denim Jeans", Description = "Stretch denim, slim leg", Colors = "Indigo,Black", Category = "Pants", WeightUnit = UnitOfMeasure.Kg, Stock = 25, Price = 69.00m, LowStockThreshold = 4 },
+                new Product { Name = "Chino Pants", Description = "Smart-casual chinos with tapered leg", Colors = "Khaki,Navy,Olive", Category = "Pants", WeightUnit = UnitOfMeasure.Kg, Stock = 40, Price = 54.99m, LowStockThreshold = 8 },
+                new Product { Name = "Pullover Hoodie", Description = "Fleece-lined pullover hoodie with kangaroo pocket", Colors = "Grey,Black,ForestGreen", Category = "Hoodie", WeightUnit = UnitOfMeasure.Kg, Stock = 22, Price = 39.99m, LowStockThreshold = 5 },
+                new Product { Name = "Bomber Jacket", Description = "Lightweight bomber jacket with ribbed cuffs", Colors = "Black,Navy,Maroon", Category = "Jacket", WeightUnit = UnitOfMeasure.Kg, Stock = 12, Price = 89.99m, LowStockThreshold = 3 },
+                new Product { Name = "Wool Overcoat", Description = "Single-breasted wool overcoat, knee length", Colors = "Charcoal,Navy", Category = "Jacket", WeightUnit = UnitOfMeasure.Kg, Stock = 8, Price = 199.00m, LowStockThreshold = 2 },
+                new Product { Name = "Leather Belt", Description = "Full-grain leather belt with metal buckle", Colors = "Brown,Black", Category = "Accessories", WeightUnit = UnitOfMeasure.Kg, Stock = 60, Price = 29.95m, LowStockThreshold = 10 },
+                new Product { Name = "Casual Sneakers", Description = "Low-top canvas sneakers with rubber sole", Colors = "White,Black,Navy", Category = "Boots", WeightUnit = UnitOfMeasure.Kg, Stock = 35, Price = 74.50m, LowStockThreshold = 7 },
+                new Product { Name = "Swim Shorts", Description = "Quick-dry swim shorts with mesh lining", Colors = "Blue,Red,Black", Category = "Shorts", WeightUnit = UnitOfMeasure.Kg, Stock = 50, Price = 24.00m, LowStockThreshold = 10 },
             ];
+
 
             _db.Products.AddRange(products);
             _db.SaveChanges();

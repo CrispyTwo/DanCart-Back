@@ -11,5 +11,5 @@ public interface IRepository<T> where T : class
     Task AddAsync(T entity);
     void Remove(T entity);
     void RemoveRange(IEnumerable<T> entities);
-    IQueryable<T> GetQuery();
+    IQueryable<T> GetQuery(bool tracking = false);
 }

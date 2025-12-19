@@ -1,2 +1,2 @@
-dotnet-ef migrations add UserFullTextSearch --project ./src/DataAccess --startup-project ./src/WebApi
+dotnet-ef migrations add ProductWithColors --project ./src/DataAccess --startup-project ./src/WebApi
 dotnet-ef database update --project ./src/DataAccess --startup-project ./src/WebApi
