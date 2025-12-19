@@ -3,7 +3,6 @@ using DanCart.WebApi.Areas.ShoppingCarts.DTOs;
 using DanCart.WebApi.Areas.ShoppingCarts.Services.IServices;
 using DanCart.WebApi.Core;
 using DanCart.WebApi.Extensions;
-using FluentResults;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
