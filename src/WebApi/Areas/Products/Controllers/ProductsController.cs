@@ -11,17 +11,24 @@ using Microsoft.AspNetCore.Mvc;
 namespace DanCart.WebApi.Areas.Products.Controllers;
 
 [ApiController, Route("api/v1/[controller]"), Authorize(Roles = UserRole.Admin)]
-public class ProductsController(IProductsService _productService) : APIControllerBase
+public class ProductsController(IProductsService _productService, IProductsBlobService _productBlobService) : APIControllerBase
 {
     #region CRUD APIs
     [HttpGet, AllowAnonymous]
     public async Task<IActionResult> Get(
         [FromQuery] int page = 1, [FromQuery] int pageSize = 1, 
-        [FromQuery] ProductStockStatus? status = null, 
+        [FromQuery] ProductStockStatus? status = null,
+        [FromQuery] string? priceRange = null,
+        [FromQuery] string? categories = null,
         [FromQuery] string? sort = null,
         [FromQuery] string? search = null)
     {
-        var result = await _productService.GetAsync(new Page(page, pageSize), status, sort, search);
+        var result = await _productService.GetAsync(new Page(page, pageSize), status, priceRange, categories?.Split(','), sort, search);
+        if (result.IsSuccess)
+        {
+            result = result.Map(products => _productBlobService.AttachImages(products));
+        }
+
         return CreateHttpResponse(result);
     }
 
@@ -29,6 +36,11 @@ public class ProductsController(IProductsService _productService) : APIControlle
     public async Task<IActionResult> Get(Guid id)
     {
         var result = await _productService.GetByIdAsync(id);
+        if (result.IsSuccess)
+        {
+            result.Map(product => _productBlobService.AttachImage(product));
+        }
+
         return CreateHttpResponse(result);
     }
 

@@ -34,6 +34,11 @@ public static class IQueryableExtension
         return await query.ToListAsync();
     }
 
+    public async static Task<IEnumerable<T>> GetAllAsync<T>(this IQueryable<T> query)
+    {
+        return await query.ToListAsync();
+    }
+
     public static IQueryable<T> ApplySorting<T>(this IQueryable<T> query, IEnumerable<(string Name, bool Desc)>? sortings)
     {
         if (sortings != null && sortings.Any())

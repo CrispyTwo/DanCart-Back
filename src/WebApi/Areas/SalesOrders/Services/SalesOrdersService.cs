@@ -17,6 +17,7 @@ namespace DanCart.WebApi.Areas.SalesOrders.Services;
 
 public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : ServiceBase, ISalesOrdersService
 {
+    #region CRUD APIs
     public async Task<Result<IEnumerable<SalesOrderWithLinesDTO>>> GetAsync(string? userId, Page page, string? sort, bool isAdmin)
     {
         const int MinPageSize = 5, MaxPageSize = 25;
@@ -50,17 +51,36 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
         return Result.Ok(order);
     }
 
-    public async Task<Result<SalesOrderWithLinesDTO>> CreateAsync(string userId, SalesOrderCreateDTO model)
+    public async Task<Result> DeleteAsync(string userId, Guid id, bool isAdmin)
+    {
+        Expression<Func<SalesOrder, bool>> filter = isAdmin ? x => x.Id == id : x => x.Id == id && x.UserId == userId;
+        var order = await _unitOfWork.SalesOrder.GetAsync(filter);
+        if (order == null)
+        {
+            return DefaultNotFound(id, nameof(SalesOrder));
+        }
+
+        if (order.OrderStatus != SalesOrderStatus.Created)
+        {
+            return Result.Fail(
+                new Error($"Order is already being processed, please contact the support for more details on how to cancel it")
+                    .WithMetadata(ErrorMetadata.Code, ErrorCode.Conflict));
+        }
+
+        _unitOfWork.SalesOrder.Remove(order);
+
+        if (!await _unitOfWork.TrySaveAsync())
+            return DefaultServerError();
+
+        return Result.Ok();
+    }
+    #endregion
+
+    public async Task<Result<SalesOrderWithLinesDTO>> CreateAsync(string userId, SalesOrderCreateDTO model, IEnumerable<ShoppingCart> cart)
     {
         var salesOrder = _mapper.Map<SalesOrder>(model);
+        var lines = _mapper.Map<List<SalesLine>>(cart);
         salesOrder.UserId = userId;
-        await _unitOfWork.SalesOrder.AddAsync(salesOrder);
-
-        var carts = await _unitOfWork.ShoppingCart.GetQuery()
-            .Where(x => x.UserId == userId)
-            .ToListAsync();
-
-        var lines = _mapper.Map<List<SalesLine>>(carts);
         foreach (var line in lines)
         {
             var product = await _unitOfWork.Product.GetAsync(x => x.Id == line.ProductId, tracked: true);
@@ -90,27 +110,18 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
         return Result.Ok(result);
     }
 
-    public async Task<Result> DeleteAsync(string userId, Guid id, bool isAdmin)
+    public async Task<Result> SucceedPayment(string paymentIntent)
     {
-        Expression<Func<SalesOrder, bool>> filter = isAdmin ? x => x.Id == id : x => x.Id == id && x.UserId == userId;
-        var order = await _unitOfWork.SalesOrder.GetAsync(filter);
-        if (order == null)
-        {
-            return DefaultNotFound(id, nameof(SalesOrder));
-        }
+        var salesOrder = await _unitOfWork.SalesOrder.GetQuery(tracking: true).FirstOrDefaultAsync(x => x.PaymentIntendId == paymentIntent);
+        if (salesOrder == null)
+            return Result.Fail(new Error($"No order with payment intent: {paymentIntent} exists")
+                .WithMetadata(ErrorMetadata.Code, ErrorCode.NotFound));
 
-        if (order.OrderStatus != SalesOrderStatus.Created)
-        {
-            return Result.Fail(
-                new Error($"Order is already being processed, please contact the support for more details on how to cancel it")
-                    .WithMetadata(ErrorMetadata.Code, ErrorCode.Conflict));
-        }
+        salesOrder.OrderStatus = SalesOrderStatus.Processing;
+        salesOrder.PaymentStatus = SalesOrderPaymentStatus.Completed;
+        salesOrder.PaymentDate = DateTime.UtcNow;
 
-        _unitOfWork.SalesOrder.Remove(order);
-
-        if (!await _unitOfWork.TrySaveAsync())
-            return DefaultServerError();
-
+        await _unitOfWork.SaveAsync();
         return Result.Ok();
     }
 }

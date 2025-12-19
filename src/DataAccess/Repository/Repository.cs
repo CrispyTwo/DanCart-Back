@@ -58,5 +58,5 @@ public class Repository<T> : IRepository<T> where T : class
     public void Update(T entity) => _dbSet.Update(entity);
     public void Remove(T entity) => _dbSet.Remove(entity);
     public void RemoveRange(IEnumerable<T> entities) => _dbSet.RemoveRange(entities);
-    public IQueryable<T> GetQuery() => _dbSet.AsNoTracking();
+    public IQueryable<T> GetQuery(bool tracking) => tracking ? _dbSet.AsTracking() : _dbSet.AsNoTracking();
 }

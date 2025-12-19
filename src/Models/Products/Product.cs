@@ -16,7 +16,9 @@ public class Product : IFullTextSearchable
 
     [Required, MaxLength(2000)]
     public required string Description { get; set; }
-
+    [Required, MaxLength(50)]
+    public required string Category { get; set; }
+    public string? Colors { get; set; }
     public ICollection<SalesLine> SalesLines { get; set; } = [];
 
 

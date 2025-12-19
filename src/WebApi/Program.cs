@@ -8,6 +8,8 @@ using DanCart.Models.Auth;
 using DanCart.WebApi;
 using DanCart.WebApi.Areas.Auth.Services;
 using DanCart.WebApi.Areas.Auth.Services.IServices;
+using DanCart.WebApi.Areas.Checkouts.Services;
+using DanCart.WebApi.Areas.Checkouts.Services.IServices;
 using DanCart.WebApi.Areas.Customers.Services;
 using DanCart.WebApi.Areas.Customers.Services.IServices;
 using DanCart.WebApi.Areas.Products.Services;
@@ -21,6 +23,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Stripe;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +60,7 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Jwt:Key").Get<string>()))
     };
 });
 
@@ -65,10 +68,14 @@ builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBlobService, AzureBlobService>();
 
+builder.Services.AddScoped<ICheckoutService, DanCart.WebApi.Areas.Checkouts.Services.CheckoutService>();
 builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
+
+builder.Services.AddScoped<IProductsBlobService, ProductsBlobService>();
+
 builder.Services.AddScoped<IProductsService, ProductsService>();
 builder.Services.AddScoped<ISalesOrdersService, SalesOrdersService>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<ICustomerService, DanCart.WebApi.Areas.Customers.Services.CustomerService>();
 
 builder.Services.AddScoped<ICustomerMetricsService, CustomerMetricsService>();
 builder.Services.AddScoped<IProductMetricsService, ProductMetricsService>();
@@ -127,6 +134,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAll");
+StripeConfiguration.ApiKey = builder.Configuration.GetSection("Stripe:SecretKey").Get<string>();
 
 SeedDatabase();
 

@@ -16,6 +16,7 @@ public class MappingProfile : Profile
 {
     public MappingProfile()
     {
+        CreateMap<UserUpdateRequest, ApplicationUser>();
         CreateMap<UserRegisterRequest, ApplicationUser>()
             .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.Email));
 

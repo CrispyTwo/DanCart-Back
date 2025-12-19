@@ -27,13 +27,6 @@ public class SalesOrdersController(ISalesOrdersService _orderService) : APIContr
         return CreateHttpResponse(result);
     }
 
-    [HttpPost]
-    public async Task<IActionResult> Create([FromBody] SalesOrderCreateDTO model)
-    {
-        var result = await _orderService.CreateAsync(User.GetUserId(), model);
-        return CreateHttpResponse(result, 201);
-    }
-
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id)
     {

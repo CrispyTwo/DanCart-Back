@@ -2,7 +2,9 @@ using AutoMapper;
 using DanCart.Models.Auth;
 using DanCart.WebApi.Areas.Auth.DTOs;
 using DanCart.WebApi.Areas.Auth.Services.IServices;
+using DanCart.WebApi.Extensions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -64,5 +66,23 @@ public class AuthController(
         if (result == null) return Unauthorized("Invalid or expired refresh token");
 
         return Ok(new AuthResult(result.Value.user.Email!, result.Value.token, refreshToken));
+    }
+
+    [HttpGet("me"), Authorize]
+    public async Task<IActionResult> Me()
+    {
+        var result = await _userManager.FindByIdAsync(User.GetUserId());
+        return Ok(result);
+    }
+
+    [HttpPut("me"), Authorize]
+    public async Task<IActionResult> UpdateMe([FromBody] UserUpdateRequest request)
+    {
+        var user = await _userManager.FindByIdAsync(User.GetUserId());
+        if (user == null) return NotFound();
+
+        _mapper.Map(request, user);
+        var result = await _userManager.UpdateAsync(user);
+        return Ok(result);
     }
 }

@@ -34,6 +34,26 @@ public class ShoppingCartService(IUnitOfWork _unitOfWork, IMapper _mapper) : Ser
         return Result.Ok();
     }
 
+    public async Task<Result> AddAsync(string userId, Guid productId)
+    {
+        var product = await _unitOfWork.Product.GetAsync(x => x.Id == productId);
+        if (product == null) return DefaultNotFound(productId, nameof(Product));
+
+        var entity = await _unitOfWork.ShoppingCart.GetAsync(x => x.UserId == userId && x.ProductId == productId, tracked: true);
+        if (entity != null)
+        {
+            entity.Quantity++;
+        }
+        else
+        {
+            var cart = new ShoppingCart() { UserId = userId, ProductId = productId, Quantity = 1 };
+            await _unitOfWork.ShoppingCart.AddAsync(cart);
+        }
+
+        await _unitOfWork.SaveAsync();
+        return Result.Ok();
+    }
+
     public async Task<Result> DeleteAsync(string userId, Guid productId)
     {
         var entity = await _unitOfWork.ShoppingCart.GetAsync(x => x.UserId == userId && x.ProductId == productId);
@@ -47,7 +67,7 @@ public class ShoppingCartService(IUnitOfWork _unitOfWork, IMapper _mapper) : Ser
 
     public async Task<Result> DeleteAsync(string userId)
     {
-        var entities = await _unitOfWork.ShoppingCart.GetRangeAsync(new Page(1, 100), new() { Filter = x => x.UserId == userId });
+        var entities = await _unitOfWork.ShoppingCart.GetQuery().Where(x => x.UserId == userId).GetAllAsync();
         if (entities != null) _unitOfWork.ShoppingCart.RemoveRange(entities);
         return Result.Ok();
     }

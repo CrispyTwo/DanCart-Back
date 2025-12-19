@@ -19,7 +19,7 @@ namespace DanCart.WebApi.Areas.Products.Services;
 
 public class ProductsService(IUnitOfWork _unitOfWork, IMapper _mapper, IBlobService _blobService) : ServiceBase, IProductsService
 {
-    public async Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? sort, string? search)
+    public async Task<Result<IEnumerable<ProductDTO>>> GetAsync(Page page, ProductStockStatus? status, string? priceRange, string[]? categories, string? sort, string? search)
     {
         const int MinPageSize = 10, MaxPageSize = 50;
         page.ApplySizeRule(MinPageSize, MaxPageSize);
@@ -36,6 +36,28 @@ public class ProductsService(IUnitOfWork _unitOfWork, IMapper _mapper, IBlobServ
             case ProductStockStatus.OutOfStock:
                 query = query.Where(x => x.Stock <= 0);
                 break;
+        }
+
+        if (!string.IsNullOrWhiteSpace(priceRange))
+        {
+            var ranges = priceRange.Split('-');
+            if (ranges.Length < 2)
+            {
+                var range = decimal.Parse(ranges[0]);
+                if (priceRange[0] == '-')
+                    query = query.Where(x => x.Price <= range);
+                else
+                    query = query.Where(x => x.Price >= range);
+            }
+            else
+            {
+                query = query.Where(x => x.Price >= decimal.Parse(ranges[0]) && x.Price <= decimal.Parse(ranges[1]));
+            }
+        }
+
+        if (categories != null && categories.Length != 0)
+        {
+            query = query.Where(x => categories.Contains(x.Category));
         }
 
         var products = await query.GetPageAsync(page, BuildSortingMap(sort), search);
