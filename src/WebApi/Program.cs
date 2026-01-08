@@ -1,4 +1,3 @@
-using DanCart.DataAccess.Blob;
 using DanCart.DataAccess.Data;
 using DanCart.DataAccess.DBInitializer;
 using DanCart.DataAccess.Models;
@@ -12,6 +11,8 @@ using DanCart.WebApi.Areas.Checkouts.Services;
 using DanCart.WebApi.Areas.Checkouts.Services.IServices;
 using DanCart.WebApi.Areas.Customers.Services;
 using DanCart.WebApi.Areas.Customers.Services.IServices;
+using DanCart.WebApi.Areas.Inventory.Services;
+using DanCart.WebApi.Areas.Inventory.Services.IServices;
 using DanCart.WebApi.Areas.Products.Services;
 using DanCart.WebApi.Areas.Products.Services.IServices;
 using DanCart.WebApi.Areas.SalesOrders.Services;
@@ -30,6 +31,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
 
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 {
@@ -60,20 +64,21 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuerSigningKey = true,
         ValidIssuer = builder.Configuration["Jwt:Issuer"],
         ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Jwt:Key").Get<string>()))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration.GetSection("Jwt:Key").Get<string>()!))
     };
 });
 
 builder.Services.AddScoped<IDBInitializer, DBInitializer>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IBlobService, AzureBlobService>();
 
 builder.Services.AddScoped<ICheckoutService, DanCart.WebApi.Areas.Checkouts.Services.CheckoutService>();
 builder.Services.AddScoped<ITokenProviderService, TokenProviderService>();
 
 builder.Services.AddScoped<IProductsBlobService, ProductsBlobService>();
+builder.Services.AddScoped<IProductsVectorSearchService, ProductsVectorSearchService>();
 
 builder.Services.AddScoped<IProductsService, ProductsService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<ISalesOrdersService, SalesOrdersService>();
 builder.Services.AddScoped<ICustomerService, DanCart.WebApi.Areas.Customers.Services.CustomerService>();
 

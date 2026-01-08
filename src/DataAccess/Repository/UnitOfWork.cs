@@ -11,8 +11,8 @@ public class UnitOfWork : IUnitOfWork
     public IRefreshTokenRepository RefreshToken { get; private set; }
     public ISalesOrderRepository SalesOrder { get; private set; }
     public ISalesLineRepository SalesLine { get; private set; }
-    public IStoreRepository Store { get; private set; }
     public IProductRepository Product { get; private set; }
+    public IInventoryItemRepository Inventory { get; private set; }
     public IShoppingCartRepository ShoppingCart { get; private set; }
 
     public UnitOfWork(ApplicationDbContext db)
@@ -21,10 +21,10 @@ public class UnitOfWork : IUnitOfWork
         Product = new ProductRepository(_db);
         ApplicationUser = new ApplicationUserRepository(_db);
         RefreshToken = new RefreshTokenRepository(_db);
-        Store = new StoreRepository(_db);
         SalesOrder = new SalesOrderRepository(_db);
         SalesLine = new SalesLineRepository(_db);
         ShoppingCart = new ShoppingCartRepository(_db);
+        Inventory = new InventoryItemRepository(_db);
     }
     public async Task SaveAsync()
     {

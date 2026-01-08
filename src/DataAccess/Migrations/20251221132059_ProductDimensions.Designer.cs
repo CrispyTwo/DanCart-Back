@@ -3,6 +3,7 @@ using System;
 using DanCart.DataAccess.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using NpgsqlTypes;
@@ -12,9 +13,11 @@ using NpgsqlTypes;
 namespace DanCart.DataAccess.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251221132059_ProductDimensions")]
+    partial class ProductDimensions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -273,7 +276,7 @@ namespace DanCart.DataAccess.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("SalesOrderId", "ProductId", "Color", "Size")
+                    b.HasIndex("SalesOrderId", "ProductId")
                         .IsUnique();
 
                     b.ToTable("SalesLines");
@@ -363,16 +366,16 @@ namespace DanCart.DataAccess.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<string>("Color")
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<int>("Size")
-                        .HasColumnType("integer");
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.HasKey("UserId", "ProductId", "Color", "Size");
+                    b.Property<int>("Size")
+                        .HasColumnType("integer");
+
+                    b.HasKey("UserId", "ProductId");
 
                     b.HasIndex("ProductId");
 

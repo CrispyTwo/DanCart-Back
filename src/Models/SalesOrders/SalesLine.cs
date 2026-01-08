@@ -23,4 +23,6 @@ public class SalesLine
     public int Quantity { get; set; }
     [Column(TypeName = SqlColumnTypes.Decimal10_2)]
     public decimal UnitPrice { get; set; }
+    public string Color { get; set; } = string.Empty;
+    public ProductSize Size { get; set; } = ProductSize.None;
 }

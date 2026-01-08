@@ -27,9 +27,13 @@ public class MappingProfile : Profile
 
         CreateMap<ProductCreateDTO, Product>();
         CreateMap<ProductUpdateDTO, Product>();
-        CreateMap<Product, ProductDTO>();
-        CreateMap<Product, ProductWithImagesDTO>();
+        CreateMap<Product, ProductUpdateDTO>();
+        CreateMap<Product, ProductDTO>()
+            .ForMember(d => d.Variants, o => o.MapFrom(s => s.Inventory));
 
+        CreateMap<InventoryItem, ProductVariant>()
+            .ForMember(d => d.Stock, o => o.MapFrom(s => s.Quantity));
+        
         CreateMap<SalesOrderCreateDTO, SalesOrder>();
         CreateMap<SalesOrderUpdateDTO, SalesOrder>();
         CreateMap<SalesOrder, SalesOrderWithLinesDTO>()

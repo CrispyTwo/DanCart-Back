@@ -13,4 +13,5 @@ public interface ISalesOrdersService
     public Task<Result> DeleteAsync(string userId, Guid id, bool isAdmin);
 
     public Task<Result> SucceedPayment(string paymentIntent);
+    public Task<Result> UpdateStatus(Guid id);
 }

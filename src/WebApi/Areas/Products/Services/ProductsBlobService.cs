@@ -1,4 +1,5 @@
-﻿using Azure.Storage.Blobs;
+﻿using AutoMapper;
+using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using DanCart.WebApi.Areas.Products.DTOs;
 using DanCart.WebApi.Areas.Products.Services.IServices;
@@ -10,8 +11,11 @@ public class ProductsBlobService : IProductsBlobService
     private readonly BlobContainerClient _containerClient;
     private readonly string _imageBaseUrl;
 
-    public ProductsBlobService(IConfiguration config)
+    private readonly IMapper _mapper;
+    public ProductsBlobService(IConfiguration config, IMapper mapper)
     {
+        _mapper = mapper;
+
         var containerName = "product-images";
         var blobUrl = config["AzureBlobStorage:BaseUrl"] ?? throw new ArgumentNullException("AzureBlobStorage:BaseUrl");
         _imageBaseUrl = blobUrl.TrimEnd('/') + "/" + containerName;
@@ -22,15 +26,15 @@ public class ProductsBlobService : IProductsBlobService
     {
         foreach (var product in products)
         {
-            product.ImageUrl = $"{_imageBaseUrl}/{product.Id}/01.jpg";
+            product.Images = [$"{_imageBaseUrl}/{product.Id}/01.jpg"];
         }
 
         return products;
     }
 
-    public ProductWithImagesDTO AttachImage(ProductWithImagesDTO product)
+    public ProductDTO AttachImages(ProductDTO product)
     {
-        product.Urls = [$"{_imageBaseUrl}/{product.Id}/01.jpg"];
+        product.Images = [$"{_imageBaseUrl}/{product.Id}/01.jpg"];
         return product;
     }
 

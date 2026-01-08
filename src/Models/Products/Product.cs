@@ -13,30 +13,24 @@ public class Product : IFullTextSearchable
 
     [Required, MaxLength(200)]
     public required string Name { get; set; }
-
     [Required, MaxLength(2000)]
     public required string Description { get; set; }
     [Required, MaxLength(50)]
     public required string Category { get; set; }
-    public string? Colors { get; set; }
     public ICollection<SalesLine> SalesLines { get; set; } = [];
-
+    public ICollection<InventoryItem> Inventory { get; set; } = [];
+    public int LowStockThreshold { get; set; } = 5;
 
     [Column(TypeName = SqlColumnTypes.Decimal10_2)]
     public decimal Price { get; set; }
 
-    public int Stock { get; set; }
-    public int LowStockThreshold { get; set; } = 5;
-
     public bool IsActive { get; set; } = true;
-
 
     [Column(TypeName = SqlColumnTypes.Decimal10_2)]
     public decimal Weight { get; set; } = 1m;
 
     [MaxLength(5)]
     public UnitOfMeasure WeightUnit { get; set; } = UnitOfMeasure.Kg;
-
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;

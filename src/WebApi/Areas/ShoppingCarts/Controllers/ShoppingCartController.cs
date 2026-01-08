@@ -1,4 +1,6 @@
 ﻿using DanCart.DataAccess.Models.Utility;
+using DanCart.WebApi.Areas.Products.DTOs;
+using DanCart.WebApi.Areas.Products.Services.IServices;
 using DanCart.WebApi.Areas.ShoppingCarts.DTOs;
 using DanCart.WebApi.Areas.ShoppingCarts.Services.IServices;
 using DanCart.WebApi.Core;
@@ -20,24 +22,24 @@ public class CartController(IShoppingCartService _shoppingCartService) : APICont
         return CreateHttpResponse(result);
     }
 
-    public sealed record AddRequest(Guid ProductId, int? Quantity);
+    public sealed record AddRequest(Guid ProductId, ProductVariant Variant, int? Quantity);
     [HttpPost]
     public async Task<IActionResult> Add([FromBody] AddRequest request)
     {
         Result result;
         if (request.Quantity == null)
-            result = await _shoppingCartService.AddAsync(User.GetUserId(), request.ProductId);
+            result = await _shoppingCartService.AddAsync(User.GetUserId(), request.ProductId, request.Variant);
         else
-            result = await _shoppingCartService.AddAsync(User.GetUserId(), request.ProductId, (int)request.Quantity);
+            result = await _shoppingCartService.AddAsync(User.GetUserId(), request.ProductId, request.Variant, (int)request.Quantity);
 
         return CreateHttpResponse<ShoppingCartDTO>(result, 201);
     }
 
 
     [HttpDelete("{productId:guid}")]
-    public async Task<IActionResult> Delete(Guid productId)
+    public async Task<IActionResult> Delete(Guid productId, [FromBody] ProductVariant variant)
     {
-        var result = await _shoppingCartService.DeleteAsync(User.GetUserId(), productId);
+        var result = await _shoppingCartService.DeleteAsync(User.GetUserId(), productId, variant);
         return CreateHttpResponse<ShoppingCartDTO>(result, 204);
     }
 

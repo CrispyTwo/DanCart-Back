@@ -33,5 +33,12 @@ public class SalesOrdersController(ISalesOrdersService _orderService) : APIContr
         var result = await _orderService.DeleteAsync(User.GetUserId(), id, User.IsAdmin());
         return CreateHttpResponse<SalesOrderWithLinesDTO>(result, 204);
     }
+
+    [HttpPost("{id}/status"), Authorize(Roles = UserRole.Admin)]
+    public async Task<IActionResult> UpdateStatus(Guid id)
+    {
+        var result = await _orderService.UpdateStatus(id);
+        return CreateHttpResponse<SalesOrderWithLinesDTO>(result);
+    }
     #endregion
 }

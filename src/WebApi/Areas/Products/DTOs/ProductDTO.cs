@@ -1,4 +1,6 @@
 ﻿using DanCart.Models.Products;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace DanCart.WebApi.Areas.Products.DTOs;
 
@@ -15,5 +17,21 @@ public class ProductDTO
     public bool IsActive { get; set; }
     public decimal? Weight { get; set; }
     public UnitOfMeasure? WeightUnit { get; set; }
-    public string? ImageUrl { get; set; }
+    public IEnumerable<OptionGroupDto> Options { get; set; } = [];
+    public IEnumerable<ProductVariant> Variants { get; set; } = [];
+    public IEnumerable<string> Images { get; set; } = [];
+}
+
+public class OptionGroupDto
+{
+    public string Name { get; set; } = string.Empty;
+    public IEnumerable<string> Values { get; set; } = [];
+}
+
+public class ProductVariant
+{
+    public string Color { get; set; } = string.Empty;
+    [JsonConverter(typeof(StringEnumConverter))]
+    public ProductSize Size { get; set; }
+    public int Stock { get; set; }
 }

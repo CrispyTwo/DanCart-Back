@@ -8,7 +8,7 @@ using System.Linq.Expressions;
 
 namespace DanCart.DataAccess.Repository;
 
-public class Repository<T> : IRepository<T> where T : class
+public class Repository<T> : IUpdatableRepository<T> where T : class
 {
     private readonly ApplicationDbContext _db;
     internal DbSet<T> _dbSet;
@@ -18,10 +18,17 @@ public class Repository<T> : IRepository<T> where T : class
         _dbSet = _db.Set<T>();
     }
     public async Task AddAsync(T entity) => await _dbSet.AddAsync(entity);
-    public async Task<long> GetTotalAsync(Expression<Func<T, bool>>? filter = null)
+    public async Task<long> GetTotalAsync(Expression<Func<T, bool>>? filter = null, string? includeProperties = null)
     {
         IQueryable<T> query = _dbSet.AsNoTracking();
         if (filter != null) query = query.Where(filter);
+        if (!string.IsNullOrEmpty(includeProperties))
+        {
+            foreach (var includeProp in includeProperties.Split([','], StringSplitOptions.RemoveEmptyEntries))
+            {
+                query = query.Include(includeProp);
+            }
+        }
         return await query.LongCountAsync();
     }
     public async Task<T?> GetAsync(Expression<Func<T, bool>> filter, string? includeProperties = null, bool tracked = false)
@@ -38,21 +45,6 @@ public class Repository<T> : IRepository<T> where T : class
         }
 
         return await query.FirstOrDefaultAsync();
-    }
-
-    public async Task<IEnumerable<T>> GetRangeAsync(Page page, GetRangeOptions<T>? options = null)
-    {
-        IQueryable<T> query = _dbSet;
-        if (options != null)
-        {
-            if (options.Filter != null) query = query.Where(options.Filter);
-
-            query = query.ApplySorting(options.Sortings);
-            foreach (var property in options.IncludeProperties)
-                query = query.Include(property.Trim());
-        }
-
-        return await query.Paginate(page).ToListAsync();
     }
 
     public void Update(T entity) => _dbSet.Update(entity);

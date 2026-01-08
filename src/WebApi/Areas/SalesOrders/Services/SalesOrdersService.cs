@@ -11,6 +11,7 @@ using DanCart.WebApi.Areas.SalesOrders.Services.IServices;
 using DanCart.WebApi.Core;
 using FluentResults;
 using Microsoft.EntityFrameworkCore;
+using Stripe;
 using System.Linq.Expressions;
 
 namespace DanCart.WebApi.Areas.SalesOrders.Services;
@@ -22,9 +23,6 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
     {
         const int MinPageSize = 5, MaxPageSize = 25;
         page.ApplySizeRule(MinPageSize, MaxPageSize);
-
-        var options = new GetRangeOptions<SalesOrder>();
-        if (!isAdmin) options.Filter = o => o.UserId == userId;
 
         var orders = _unitOfWork.SalesOrder.GetQuery()
             .Include(x => x.SalesLines)
@@ -86,19 +84,20 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
             var product = await _unitOfWork.Product.GetAsync(x => x.Id == line.ProductId, tracked: true);
             if (product == null)
             {
-                return DefaultNotFound<SalesOrderWithLinesDTO>(line.ProductId, nameof(Product));
+                return DefaultNotFound<SalesOrderWithLinesDTO>(line.ProductId, nameof(Models.Products.Product));
             }
 
-            if (line.Quantity > product.Stock)
+            var inventory = await _unitOfWork.Inventory.GetAsync(x => x.ProductId == product.Id && x.Color == line.Color && x.Size == line.Size, tracked: true);
+            if (inventory == null || line.Quantity > inventory.Quantity)
             {
                 return Result.Fail<SalesOrderWithLinesDTO>(
-                    new Error($"Insufficient stock for product {product.Name}. Available: {product.Stock}, Requested: {line.Quantity}")
+                    new Error($"Insufficient stock for product {product.Name}. Available: {product.Inventory.Sum(x => x.Quantity)}, Requested: {line.Quantity}")
                         .WithMetadata(ErrorMetadata.Code, ErrorCode.Conflict));
             }
 
             line.SalesOrder = salesOrder;
             line.UnitPrice = product.Price;
-            product.Stock -= line.Quantity;
+            inventory.Quantity -= line.Quantity;
 
             await _unitOfWork.SalesLine.AddAsync(line);
         }
@@ -108,6 +107,19 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
 
         var result = _mapper.Map<SalesOrderWithLinesDTO>(salesOrder);
         return Result.Ok(result);
+    }
+
+    public async Task<Result> UpdateStatus(Guid id)
+    {
+        var salesOrder = await _unitOfWork.SalesOrder.GetQuery(tracking: true).FirstOrDefaultAsync(x => x.Id == id);
+        if (salesOrder == null)
+            return Result.Fail(new Error($"No order with id: {id} exists")
+                .WithMetadata(ErrorMetadata.Code, ErrorCode.NotFound));
+
+        salesOrder.OrderStatus = salesOrder.OrderStatus + 1;
+
+        await _unitOfWork.SaveAsync();
+        return Result.Ok();
     }
 
     public async Task<Result> SucceedPayment(string paymentIntent)

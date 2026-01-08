@@ -13,6 +13,7 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
     public DbSet<Store> Stores { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<InventoryItem> InventoryItems { get; set; }
     public DbSet<SalesOrder> SalesOrders { get; set; }
     public DbSet<SalesLine> SalesLines { get; set; }
     public DbSet<ShoppingCart> ShoppingCarts { get; set; }
@@ -22,6 +23,8 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
     protected override void OnModelCreating(ModelBuilder builder)
     {
         builder.ApplyConfiguration(new ProductConfiguration());
+        builder.ApplyConfiguration(new ShoppingCartConfiguration());
+        builder.ApplyConfiguration(new InventoryItemConfiguration());
         builder.ApplyConfiguration(new RefreshTokenConfiguration());
         builder.ApplyConfiguration(new ApplicationUserConfiguration());
 
@@ -34,14 +37,11 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.Entity<SalesLine>()
-            .HasIndex(x => new { x.SalesOrderId, x.ProductId })
+            .HasIndex(x => new { x.SalesOrderId, x.ProductId, x.Color, x.Size })
             .IsUnique();
 
         builder.Entity<ApplicationUser>()
             .HasIndex(x => x.Email)
             .IsUnique();
-
-        builder.Entity<ShoppingCart>()
-            .HasKey(x => new { x.UserId, x.ProductId });
     }
 }
