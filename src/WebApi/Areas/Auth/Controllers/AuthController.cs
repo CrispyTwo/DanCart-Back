@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DanCart.WebApi.Areas.Auth.Controllers;
 
-[ApiController, Route("api/v1/[controller]"), Authorize(Roles = UserRole.Admin)]
+[ApiController, Route("api/v1/[controller]"), Authorize]
 public class AuthController(
     UserManager<ApplicationUser> _userManager,
     SignInManager<ApplicationUser> _signInManager,
