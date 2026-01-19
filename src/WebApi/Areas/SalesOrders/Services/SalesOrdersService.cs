@@ -24,7 +24,10 @@ public class SalesOrdersService(IUnitOfWork _unitOfWork, IMapper _mapper) : Serv
         const int MinPageSize = 5, MaxPageSize = 25;
         page.ApplySizeRule(MinPageSize, MaxPageSize);
 
-        var orders = _unitOfWork.SalesOrder.GetQuery()
+        var query = _unitOfWork.SalesOrder.GetQuery();
+        if (!isAdmin) query = query.Where(x => x.UserId == userId);
+
+        var orders = query
             .Include(x => x.SalesLines)
             .ProjectTo<SalesOrderWithLinesDTO>(_mapper.ConfigurationProvider);
 
